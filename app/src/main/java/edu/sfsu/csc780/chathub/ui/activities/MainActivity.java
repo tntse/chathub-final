@@ -27,13 +27,10 @@ import android.preference.PreferenceManager;
 import android.provider.MediaStore;
 import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.NavigationView;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.Loader;
-import android.support.v4.widget.DrawerLayout;
-import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -72,11 +69,11 @@ import java.util.Date;
 
 import edu.sfsu.csc780.chathub.R;
 import edu.sfsu.csc780.chathub.model.ChatMessage;
-import edu.sfsu.csc780.chathub.ui.utils.DesignUtils;
-import edu.sfsu.csc780.chathub.ui.fragments.ImageDialogFragment;
-import edu.sfsu.csc780.chathub.ui.utils.LocationUtils;
-import edu.sfsu.csc780.chathub.ui.utils.MapLoader;
 import edu.sfsu.csc780.chathub.ui.utils.MessageUtil;
+import edu.sfsu.csc780.chathub.ui.utils.DesignUtils;
+import edu.sfsu.csc780.chathub.ui.utils.MapLoader;
+import edu.sfsu.csc780.chathub.ui.utils.LocationUtils;
+import edu.sfsu.csc780.chathub.ui.fragments.ImageDialogFragment;
 
 public class MainActivity extends AppCompatActivity
         implements GoogleApiClient.OnConnectionFailedListener,
@@ -85,13 +82,12 @@ public class MainActivity extends AppCompatActivity
     private static final String TAG = "MainActivity";
     public static final String MESSAGES_CHILD = "messages";
     private static final int REQUEST_INVITE = 1;
+    private static final int REQUEST_TAKE_PHOTO = 3;
     public static final int REQUEST_PREFERENCES = 2;
     public static final int MSG_LENGTH_LIMIT = 64;
     private static final double MAX_LINEAR_DIMENSION = 500.0;
     public static final String ANONYMOUS = "anonymous";
     private static final int REQUEST_PICK_IMAGE = 1;
-    private static final int REQUEST_TAKE_PHOTO = 100;
-
     private String mUsername;
     private String mPhotoUrl;
     private SharedPreferences mSharedPreferences;
@@ -102,9 +98,6 @@ public class MainActivity extends AppCompatActivity
     private LinearLayoutManager mLinearLayoutManager;
     private ProgressBar mProgressBar;
     private EditText mMessageEditText;
-    private DrawerLayout mDrawerLayout;
-    private NavigationView mNavigationView;
-    private ActionBar mActionBar;
 
     // Firebase instance variables
     private FirebaseAuth mAuth;
@@ -113,18 +106,17 @@ public class MainActivity extends AppCompatActivity
     private FirebaseRecyclerAdapter<ChatMessage, MessageUtil.MessageViewHolder>
             mFirebaseAdapter;
     private ImageButton mImageButton;
+    private ImageButton mPhotoButton;
     private int mSavedTheme;
     private ImageButton mLocationButton;
-    private ImageButton mCameraButton;
-
     private View.OnClickListener mImageClickListener = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
-            ImageView photoView = (ImageView) v.findViewById(R.id.messageImageView);
+            ImageView photoView =  (ImageView) v.findViewById(R.id.messageImageView);
             // Only show the larger view in dialog if there's a image for the message
             if (photoView.getVisibility() == View.VISIBLE) {
                 Bitmap bitmap = ((GlideBitmapDrawable) photoView.getDrawable()).getBitmap();
-                showPhotoDialog(ImageDialogFragment.newInstance(bitmap) );
+                showPhotoDialog( ImageDialogFragment.newInstance(bitmap));
             }
         }
     };
@@ -137,7 +129,6 @@ public class MainActivity extends AppCompatActivity
         mSharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
         // Set default username is anonymous.
         mUsername = ANONYMOUS;
-
         //Initialize Auth
         mAuth = FirebaseAuth.getInstance();
         mUser = mAuth.getCurrentUser();
@@ -164,12 +155,11 @@ public class MainActivity extends AppCompatActivity
         mLinearLayoutManager.setStackFromEnd(true);
         mMessageRecyclerView.setLayoutManager(mLinearLayoutManager);
 
-        mNavigationView = (NavigationView)findViewById(R.id.navigation);
-
         mFirebaseAdapter = MessageUtil.getFirebaseAdapter(this,
                 this,  /* MessageLoadListener */
                 mLinearLayoutManager,
-                mMessageRecyclerView, mImageClickListener);
+                mMessageRecyclerView,
+                mImageClickListener);
         mMessageRecyclerView.setAdapter(mFirebaseAdapter);
 
         mProgressBar.setVisibility(ProgressBar.INVISIBLE);
@@ -219,6 +209,14 @@ public class MainActivity extends AppCompatActivity
             }
         });
 
+        mPhotoButton = (ImageButton) findViewById(R.id.cameraButton);
+        mPhotoButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                dispatchTakePhotoIntent();
+            }
+        });
+
         mLocationButton = (ImageButton) findViewById(R.id.locationButton);
         mLocationButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -226,14 +224,15 @@ public class MainActivity extends AppCompatActivity
                 loadMap();
             }
         });
+    }
 
-        mCameraButton = (ImageButton) findViewById(R.id.cameraButton);
-        mCameraButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                dispatchTakePhotoIntent();
-            }
-        });
+    private void dispatchTakePhotoIntent() {
+        Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+
+        // Ensure the implicit intent can be handled
+        if (takePictureIntent.resolveActivity(getPackageManager()) != null) {
+            startActivityForResult(takePictureIntent, REQUEST_TAKE_PHOTO);
+        }
     }
 
     @Override
@@ -346,17 +345,20 @@ public class MainActivity extends AppCompatActivity
             } else {
                 Log.e(TAG, "Cannot get image for uploading");
             }
+        } else if (requestCode == REQUEST_TAKE_PHOTO && resultCode == RESULT_OK) {
+
+            if (data != null && data.getExtras() != null) {
+                Bundle extras = data.getExtras();
+                Bitmap imageBitmap = (Bitmap) extras.get("data");
+                Log.d(TAG, "imageBitmap size:" + imageBitmap.getByteCount());
+                createImageMessage(savePhotoImage(imageBitmap));
+            } else {
+                Log.e(TAG, "Cannot get photo URI after taking photo");
+            }
         } else if (requestCode == REQUEST_PREFERENCES) {
             if (DesignUtils.getPreferredTheme(this) != mSavedTheme) {
                 DesignUtils.applyColorfulTheme(this);
                 this.recreate();
-            }
-        } else if (requestCode == REQUEST_TAKE_PHOTO && resultCode == Activity.RESULT_OK){
-            Bundle extras = data.getExtras();
-            if(extras != null){
-                Bitmap image = (Bitmap) extras.get("data");
-                Uri uri = savePhotoImage(image);
-                createImageMessage(uri);
             }
         }
     }
@@ -490,23 +492,15 @@ public class MainActivity extends AppCompatActivity
         loader.forceLoad();
     }
 
-    private void dispatchTakePhotoIntent(){
-        Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-        if(intent.resolveActivity(getPackageManager()) != null)
-            startActivityForResult(intent, REQUEST_TAKE_PHOTO);
-
-    }
-
     void showPhotoDialog(DialogFragment dialogFragment) {
         // DialogFragment.show() will take care of adding the fragment
-        // in a transaction. We also want to remove any currently showing
+        // in a transaction.  We also want to remove any currently showing
         // dialog, so make our own transaction and take care of that here.
         FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
-        android.support.v4.app.Fragment prev =
-                getSupportFragmentManager().findFragmentByTag("dialog");
+        android.support.v4.app.Fragment prev = getSupportFragmentManager().findFragmentByTag("dialog");
         if (prev != null) { ft.remove(prev); }
         ft.addToBackStack(null);
+
         dialogFragment.show(ft, "dialog");
     }
-
 }

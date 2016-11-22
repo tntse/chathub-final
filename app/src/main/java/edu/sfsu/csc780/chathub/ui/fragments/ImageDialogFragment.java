@@ -10,22 +10,17 @@ import android.support.v7.app.AlertDialog;
 import android.view.Display;
 import android.view.View;
 import android.widget.ImageView;
-
 import edu.sfsu.csc780.chathub.R;
 
-/**
- * Created by thomastse on 11/2/16.
- */
-
 public class ImageDialogFragment extends DialogFragment {
-
-    public static final String PHOTO_BITMAP = "Photo";
-    public static final int SIDE_MARGIN = 0;
+    private static final String LOG_TAG = ImageDialogFragment.class.getSimpleName();
+    private static final String PHOTO_BITMAP = "photo_uri";
+    private static final int SIDE_MARGIN = 200;
     private Bitmap mPhotoBitmap;
     private int mScaledWidth;
     private int mScaledHeight;
 
-    public static ImageDialogFragment  newInstance(Bitmap bitmap) {
+    public static ImageDialogFragment newInstance(Bitmap bitmap) {
         ImageDialogFragment f = new ImageDialogFragment();
         Bundle args = new Bundle();
         args.putParcelable(PHOTO_BITMAP, bitmap);
@@ -39,10 +34,12 @@ public class ImageDialogFragment extends DialogFragment {
         mPhotoBitmap = getArguments().getParcelable(PHOTO_BITMAP);
         int imageWidth = mPhotoBitmap.getWidth();
         int imageHeight = mPhotoBitmap.getHeight();
-        Display display = getActivity().getWindowManager().getDefaultDisplay();
+
+        Display display =  getActivity().getWindowManager().getDefaultDisplay();
         Point size = new Point();
         display.getSize(size);
         int width = size.x;
+
         mScaledWidth = (int)((double)width - SIDE_MARGIN);
         mScaledHeight = (int)((double)imageHeight / (double)imageWidth * mScaledWidth);
     }
@@ -51,25 +48,19 @@ public class ImageDialogFragment extends DialogFragment {
     public Dialog onCreateDialog(Bundle savedInstanceState) {
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
         View view = getActivity().getLayoutInflater().inflate(R.layout.image_dialog_layout, null);
-        //TODO: 1.get the photoImageView from the root view
-        ImageView mPhotoImageView = (ImageView)view.findViewById(R.id.photoImageView);
 
-        //TODO: 2.set layout parameters of photoImageView to the dimensions that were set in...
-        //TODO: ...the constructor
+        ImageView photoImage = (ImageView) view.findViewById(R.id.photoImageView);
 
-        mPhotoImageView.setMaxWidth(mScaledWidth);
-        mPhotoImageView.setMaxHeight(mScaledHeight);
+        photoImage.getLayoutParams().width = mScaledWidth;
+        photoImage.getLayoutParams().height = mScaledHeight;
 
         builder.setView(view);
-        //TODO: 3. set ImageBitmap of photoImageView to the bitmap from the constructor argument
 
-        mPhotoImageView.setImageBitmap(mPhotoBitmap);
+        photoImage.setImageBitmap(mPhotoBitmap);
+        final Dialog dialog = builder.create();
+        dialog.getWindow().setBackgroundDrawable(new ColorDrawable(android.graphics.Color.TRANSPARENT));
 
-        final Dialog dialog = builder.create(); dialog.getWindow().setBackgroundDrawable(
-                new ColorDrawable(android.graphics.Color.TRANSPARENT));
         dialog.show();
         return dialog;
     }
-
-
 }

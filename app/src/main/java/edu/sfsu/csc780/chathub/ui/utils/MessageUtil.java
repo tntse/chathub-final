@@ -1,11 +1,12 @@
 package edu.sfsu.csc780.chathub.ui.utils;
-
 import android.app.Activity;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.net.Uri;
 import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
+import android.support.v4.app.DialogFragment;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -15,6 +16,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.resource.bitmap.GlideBitmapDrawable;
 import com.bumptech.glide.request.animation.GlideAnimation;
 import com.bumptech.glide.request.target.SimpleTarget;
 import com.firebase.ui.database.FirebaseRecyclerAdapter;
@@ -41,8 +43,6 @@ public class MessageUtil {
     private static FirebaseStorage sStorage = FirebaseStorage.getInstance();
     private static MessageLoadListener sAdapterListener;
     private static FirebaseAuth sFirebaseAuth;
-    private static View.OnClickListener sMessageClickListener;
-
     public interface MessageLoadListener { public void onLoadComplete(); }
 
     public static void send(ChatMessage chatMessage) {
@@ -50,13 +50,13 @@ public class MessageUtil {
     }
 
     public static class MessageViewHolder extends RecyclerView.ViewHolder {
+        public static View.OnClickListener sMessageViewListener;
         public TextView messageTextView;
         public ImageView messageImageView;
         public TextView messengerTextView;
         public CircleImageView messengerImageView;
         public TextView timestampTextView;
         public View messageLayout;
-
         public MessageViewHolder(View v) {
             super(v);
             messageTextView = (TextView) itemView.findViewById(R.id.messageTextView);
@@ -65,7 +65,7 @@ public class MessageUtil {
             messageImageView = (ImageView) itemView.findViewById(R.id.messageImageView);
             timestampTextView = (TextView) itemView.findViewById(R.id.timestampTextView);
             messageLayout = (View) itemView.findViewById(R.id.messageLayout);
-            v.setOnClickListener(sMessageClickListener);
+            v.setOnClickListener(sMessageViewListener);
         }
     }
 
@@ -73,10 +73,11 @@ public class MessageUtil {
                                                              MessageLoadListener listener,
                                                              final LinearLayoutManager linearManager,
                                                              final RecyclerView recyclerView,
-                                                             final View.OnClickListener onclicklistener) {
+                                                             final View.OnClickListener clickListener) {
         final SharedPreferences preferences =
                 PreferenceManager.getDefaultSharedPreferences(activity);
         sAdapterListener = listener;
+        MessageViewHolder.sMessageViewListener = clickListener;
         final FirebaseRecyclerAdapter adapter = new FirebaseRecyclerAdapter<ChatMessage,
                 MessageViewHolder>(
                 ChatMessage.class,
@@ -150,7 +151,7 @@ public class MessageUtil {
                 }
 
                 long timestamp = chatMessage.getTimestamp();
-                if (timestamp == 0 || timestamp == chatMessage.NO_TIMESTAMP) {
+                if (timestamp == 0 || timestamp == chatMessage.NO_TIMESTAMP ) {
                     viewHolder.timestampTextView.setVisibility(View.GONE);
                 } else {
                     viewHolder.timestampTextView.setText(DesignUtils.formatTime(activity,
@@ -160,8 +161,6 @@ public class MessageUtil {
 
             }
         };
-
-        sMessageClickListener = onclicklistener;
 
         adapter.registerAdapterDataObserver(new RecyclerView.AdapterDataObserver() {
             @Override
