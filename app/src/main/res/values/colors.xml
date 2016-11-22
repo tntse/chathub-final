@@ -18,5 +18,7 @@
     <color name="almost_black">#212121</color>
     <color name="black">#000000</color>
     <color name="mellow_brown">#D7CCC8</color>
+
+    <color name="sidebar">#AB9BA9</color>
 </resources>
 
