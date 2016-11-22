@@ -137,6 +137,7 @@ public class MainActivity extends AppCompatActivity
         mSharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
         // Set default username is anonymous.
         mUsername = ANONYMOUS;
+
         //Initialize Auth
         mAuth = FirebaseAuth.getInstance();
         mUser = mAuth.getCurrentUser();
@@ -162,6 +163,8 @@ public class MainActivity extends AppCompatActivity
         mLinearLayoutManager = new LinearLayoutManager(this);
         mLinearLayoutManager.setStackFromEnd(true);
         mMessageRecyclerView.setLayoutManager(mLinearLayoutManager);
+
+        mNavigationView = (NavigationView)findViewById(R.id.navigation);
 
         mFirebaseAdapter = MessageUtil.getFirebaseAdapter(this,
                 this,  /* MessageLoadListener */
