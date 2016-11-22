@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package edu.sfsu.csc780.chathub.ui;
+package edu.sfsu.csc780.chathub.ui.activities;
 
 import android.app.Activity;
 import android.content.Intent;
@@ -69,6 +69,11 @@ import java.util.Date;
 
 import edu.sfsu.csc780.chathub.R;
 import edu.sfsu.csc780.chathub.model.ChatMessage;
+import edu.sfsu.csc780.chathub.ui.utils.DesignUtils;
+import edu.sfsu.csc780.chathub.ui.fragments.ImageDialogFragment;
+import edu.sfsu.csc780.chathub.ui.utils.LocationUtils;
+import edu.sfsu.csc780.chathub.ui.utils.MapLoader;
+import edu.sfsu.csc780.chathub.ui.utils.MessageUtil;
 
 public class MainActivity extends AppCompatActivity
         implements GoogleApiClient.OnConnectionFailedListener,
@@ -489,7 +494,8 @@ public class MainActivity extends AppCompatActivity
         // dialog, so make our own transaction and take care of that here.
         FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
         android.support.v4.app.Fragment prev =
-                getSupportFragmentManager().findFragmentByTag("dialog"); if (prev != null) { ft.remove(prev); }
+                getSupportFragmentManager().findFragmentByTag("dialog");
+        if (prev != null) { ft.remove(prev); }
         ft.addToBackStack(null);
         dialogFragment.show(ft, "dialog");
     }

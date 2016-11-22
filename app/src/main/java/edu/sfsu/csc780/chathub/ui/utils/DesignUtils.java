@@ -1,4 +1,4 @@
-package edu.sfsu.csc780.chathub.ui;
+package edu.sfsu.csc780.chathub.ui.utils;
 
 import android.app.Activity;
 import android.content.Context;

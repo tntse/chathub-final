@@ -1,4 +1,4 @@
-package edu.sfsu.csc780.chathub.ui;
+package edu.sfsu.csc780.chathub.ui.utils;
 
 import android.content.Context;
 import android.graphics.Bitmap;

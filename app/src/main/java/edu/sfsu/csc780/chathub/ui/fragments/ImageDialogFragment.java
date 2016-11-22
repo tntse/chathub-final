@@ -1,4 +1,4 @@
-package edu.sfsu.csc780.chathub.ui;
+package edu.sfsu.csc780.chathub.ui.fragments;
 
 import android.app.Dialog;
 import android.graphics.Bitmap;
@@ -25,7 +25,7 @@ public class ImageDialogFragment extends DialogFragment {
     private int mScaledWidth;
     private int mScaledHeight;
 
-    static ImageDialogFragment newInstance(Bitmap bitmap) {
+    public static ImageDialogFragment  newInstance(Bitmap bitmap) {
         ImageDialogFragment f = new ImageDialogFragment();
         Bundle args = new Bundle();
         args.putParcelable(PHOTO_BITMAP, bitmap);

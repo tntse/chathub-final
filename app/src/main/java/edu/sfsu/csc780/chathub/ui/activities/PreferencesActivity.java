@@ -1,18 +1,17 @@
-package edu.sfsu.csc780.chathub.ui;
+package edu.sfsu.csc780.chathub.ui.activities;
 
 import android.os.Bundle;
+import android.preference.PreferenceActivity;
 import android.preference.PreferenceFragment;
 
 import edu.sfsu.csc780.chathub.R;
 
-public class ChathubPreferenceActivity extends PreferencesActivity {
+public class PreferencesActivity extends PreferenceActivity {
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        getFragmentManager()
-                .beginTransaction()
-                .replace(android.R.id.content, new MyPreferenceFragment())
-                .commit();
+        getFragmentManager().beginTransaction().replace(android.R.id.content, new MyPreferenceFragment()).commit();
     }
 
     public static class MyPreferenceFragment extends PreferenceFragment
@@ -24,5 +23,5 @@ public class ChathubPreferenceActivity extends PreferencesActivity {
             addPreferencesFromResource(R.xml.preferences);
         }
     }
-}
 
+}
