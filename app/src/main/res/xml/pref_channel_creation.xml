@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+    <SwitchPreference
+        android:defaultValue="true"
+        android:key="public_private_switch"
+        android:summary="@string/public_description"
+        android:title="@string/public_channel" />
+
+    <EditTextPreference
+        android:selectAllOnFocus="false"
+        android:singleLine="true"
+        android:layout="@layout/channel_name_edit_text"
+        android:key="channel_name_edit_text"
+        android:summary="@string/channel_name_description"
+        android:enabled="true" />
+
+
+    <!--Add members here-->
+
+    <EditTextPreference
+        android:selectAllOnFocus="false"
+        android:singleLine="true"
+        android:layout="@layout/purpose_edit_text"
+        android:key="channel_name_edit_text"
+        android:summary="@string/channel_purpose"
+        android:enabled="true" />
+
+</PreferenceScreen>
