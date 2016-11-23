@@ -10,6 +10,8 @@
         <item name="android:colorButtonNormal">@drawable/button_selector</item>
         <item name="colorButtonNormal">@drawable/button_selector</item>
         <item name="android:buttonStyle">@style/ChatHubButtonStyle</item>
+        <item name="android:actionMenuTextColor">#FFFFFF</item>
+
     </style>
 
     <style name="ChatHubButtonStyle" parent="Widget.AppCompat.Button">

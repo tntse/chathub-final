@@ -7,26 +7,22 @@ import java.util.List;
  */
 
 public class Channel{
-    private ChannelType channelType;
+    private String channelType;
     private List<String> userList;
-    private List<ChatMessage> chatMessageList;
+    private String channelName;
     private String channelTopic;
 
     public Channel() {}
 
-    public Channel(List<String> userList, ChannelType channelType) {
+    public Channel(List<String> userList, String channelType, String channelName) {
         this.userList = userList;
         this.channelType = channelType;
+        this.channelName = channelName;
     }
 
-    public Channel(List<String> userList, String channelTopic, ChannelType channelType) {
-        this(userList, channelType);
+    public Channel(String channelTopic, String channelName, List<String> userList, String channelType) {
+        this(userList, channelType, channelName);
         this.channelTopic = channelTopic;
-    }
-
-    public Channel(String channelTopic, List<ChatMessage> chatMessageList, List<String> userList, ChannelType channelType) {
-        this(userList, channelTopic, channelType);
-        this.chatMessageList = chatMessageList;
     }
 
     public String getChannelTopic() {
@@ -41,15 +37,23 @@ public class Channel{
         return userList;
     }
 
-    public List<ChatMessage> getChatMessageList() {
-        return chatMessageList;
+    public String getChatMessageList() {
+        return channelName;
     }
 
-    public ChannelType getChannelType() {
+    public String getChannelType() {
         return channelType;
     }
 
-    public void setChannelType(ChannelType channelType) {
+    public void setChannelType(String channelType) {
         this.channelType = channelType;
+    }
+
+    public String getChannelName() {
+        return channelName;
+    }
+
+    public void setChannelName(String channelName) {
+        this.channelName = channelName;
     }
 }

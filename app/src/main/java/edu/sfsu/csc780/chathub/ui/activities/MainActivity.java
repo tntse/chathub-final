@@ -81,6 +81,7 @@ public class MainActivity extends AppCompatActivity
 
     private static final String TAG = "MainActivity";
     public static final String MESSAGES_CHILD = "messages";
+    public static final String CHANNELS_CHILD = "channels";
     private static final int REQUEST_INVITE = 1;
     private static final int REQUEST_TAKE_PHOTO = 3;
     public static final int REQUEST_PREFERENCES = 2;
@@ -143,6 +144,8 @@ public class MainActivity extends AppCompatActivity
             }
         }
 
+        final String currentChannel = mSharedPreferences.getString("channelName", "general");
+
         mGoogleApiClient = new GoogleApiClient.Builder(this)
                 .enableAutoManage(this /* FragmentActivity */, this /* OnConnectionFailedListener */)
                 .addApi(Auth.GOOGLE_SIGN_IN_API)
@@ -194,7 +197,8 @@ public class MainActivity extends AppCompatActivity
                 ChatMessage chatMessage = new
                         ChatMessage(mMessageEditText.getText().toString(),
                         mUsername,
-                        mPhotoUrl);
+                        mPhotoUrl,
+                        currentChannel);
                 MessageUtil.send(chatMessage);
                 mMessageEditText.setText("");
             }
