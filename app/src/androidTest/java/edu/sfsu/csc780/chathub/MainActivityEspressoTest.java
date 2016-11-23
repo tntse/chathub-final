@@ -23,7 +23,7 @@ import android.test.suitebuilder.annotation.LargeTest;
 import org.junit.Rule;
 import org.junit.runner.RunWith;
 
-import edu.sfsu.csc780.chathub.ui.MainActivity;
+import edu.sfsu.csc780.chathub.ui.activities.MainActivity;
 
 @RunWith(AndroidJUnit4.class)
 @LargeTest

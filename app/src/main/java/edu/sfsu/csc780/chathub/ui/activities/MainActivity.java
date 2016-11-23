@@ -27,6 +27,7 @@ import android.preference.PreferenceManager;
 import android.provider.MediaStore;
 import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
+import android.support.design.widget.NavigationView;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.app.LoaderManager;
@@ -46,6 +47,7 @@ import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
+import android.widget.RelativeLayout;
 import android.widget.Toast;
 
 import com.bumptech.glide.load.resource.bitmap.GlideBitmapDrawable;
@@ -99,6 +101,8 @@ public class MainActivity extends AppCompatActivity
     private LinearLayoutManager mLinearLayoutManager;
     private ProgressBar mProgressBar;
     private EditText mMessageEditText;
+    private NavigationView mNavigationView;
+    private RelativeLayout mChannelAdd;
 
     // Firebase instance variables
     private FirebaseAuth mAuth;
@@ -152,11 +156,13 @@ public class MainActivity extends AppCompatActivity
                 .build();
 
         // Initialize ProgressBar and RecyclerView.
+        mNavigationView = (NavigationView) findViewById(R.id.navigation);
         mProgressBar = (ProgressBar) findViewById(R.id.progressBar);
         mMessageRecyclerView = (RecyclerView) findViewById(R.id.messageRecyclerView);
         mLinearLayoutManager = new LinearLayoutManager(this);
         mLinearLayoutManager.setStackFromEnd(true);
         mMessageRecyclerView.setLayoutManager(mLinearLayoutManager);
+        mChannelAdd = (RelativeLayout) mNavigationView.getHeaderView(0).findViewById(R.id.channelAdd);
 
         mFirebaseAdapter = MessageUtil.getFirebaseAdapter(this,
                 this,  /* MessageLoadListener */
@@ -226,6 +232,14 @@ public class MainActivity extends AppCompatActivity
             @Override
             public void onClick(View v) {
                 loadMap();
+            }
+        });
+
+        mChannelAdd.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(MainActivity.this, ChannelSearchActivity.class);
+                startActivity(intent);
             }
         });
     }

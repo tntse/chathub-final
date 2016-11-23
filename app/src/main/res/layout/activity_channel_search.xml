@@ -13,14 +13,15 @@
     <EditText
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_above="@+id/channel_list_recyclerview"
+        android:id="@+id/searchChannelsEdit"
         android:hint="Search channels"/>
 
     <android.support.v7.widget.RecyclerView
         android:id="@+id/channel_list_recyclerview"
+        android:layout_below="@+id/searchChannelsEdit"
         android:name="edu.sfsu.csc780.chathub.ui.fragments.ChannelListFragment"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="wrap_content"
         android:layout_marginLeft="16dp"
         android:layout_marginRight="16dp"
         tools:listitem="@layout/item_channel" />
