@@ -3,7 +3,6 @@ package edu.sfsu.csc780.chathub.ui.utils;
 import android.app.Activity;
 import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
-import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.widget.ImageView;
@@ -13,7 +12,7 @@ import com.firebase.ui.database.FirebaseRecyclerAdapter;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.database.Query;
 
 import edu.sfsu.csc780.chathub.R;
 import edu.sfsu.csc780.chathub.model.Channel;
@@ -27,7 +26,6 @@ public class ChannelUtil {
     public static final String CHANNELS_CHILD = "channels";
     private static DatabaseReference sFirebaseDatabaseReference =
             FirebaseDatabase.getInstance().getReference();
-    private static FirebaseStorage sStorage = FirebaseStorage.getInstance();
     private static FirebaseAuth sFirebaseAuth;
 
     public static void createChannel(Channel channel) {
@@ -49,9 +47,7 @@ public class ChannelUtil {
         }
     }
 
-    public static FirebaseRecyclerAdapter<Channel, ChannelViewHolder> getFirebaseAdapter(final Activity activity,
-                                                                                         final LinearLayoutManager linearManager,
-                                                                                         final RecyclerView recyclerView,
+    public static FirebaseRecyclerAdapter<Channel, ChannelViewHolder> getFirebaseAdapterForChannelList(final Activity activity,
                                                                                          final View.OnClickListener clickListener) {
         final SharedPreferences preferences =
                 PreferenceManager.getDefaultSharedPreferences(activity);
@@ -69,19 +65,30 @@ public class ChannelUtil {
             }
         };
 
-//        adapter.registerAdapterDataObserver(new RecyclerView.AdapterDataObserver() {
-//            @Override
-//            public void onItemRangeInserted(int positionStart, int itemCount) {
-//                super.onItemRangeInserted(positionStart, itemCount);
-//                int messageCount = adapter.getItemCount();
-//                int lastVisiblePosition = linearManager.findLastCompletelyVisibleItemPosition();
-//                if (lastVisiblePosition == -1 ||
-//                        (positionStart >= (messageCount - 1) &&
-//                                lastVisiblePosition == (positionStart - 1))) {
-//                    recyclerView.scrollToPosition(positionStart);
-//                }
-//            }
-//        });
+        return adapter;
+    }
+
+    public static FirebaseRecyclerAdapter<Channel, ChannelViewHolder> getFirebaseAdapterForUserChannelList(final Activity activity,
+                                                                                                       final View.OnClickListener clickListener) {
+        final SharedPreferences preferences =
+                PreferenceManager.getDefaultSharedPreferences(activity);
+        ChannelViewHolder.sChannelViewListener = clickListener;
+
+        Query query = sFirebaseDatabaseReference.child(UserUtil.USER_CHILD).endAt(preferences.getString("username", ""));
+
+        final FirebaseRecyclerAdapter adapter = new FirebaseRecyclerAdapter<Channel,
+                ChannelViewHolder>(
+                Channel.class,
+                R.layout.item_channel,
+                ChannelViewHolder.class,
+                query.getRef().child(CHANNELS_CHILD)) {
+            @Override
+            protected void populateViewHolder(final ChannelViewHolder viewHolder,
+                                              Channel channel, int position) {
+                viewHolder.channelName.setText(channel.getChannelName());
+            }
+        };
+
         return adapter;
     }
 }

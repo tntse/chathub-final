@@ -82,8 +82,6 @@ public class MainActivity extends AppCompatActivity
         MessageUtil.MessageLoadListener {
 
     private static final String TAG = "MainActivity";
-    public static final String MESSAGES_CHILD = "messages";
-    public static final String CHANNELS_CHILD = "channels";
     private static final int REQUEST_INVITE = 1;
     private static final int REQUEST_TAKE_PHOTO = 3;
     public static final int REQUEST_PREFERENCES = 2;

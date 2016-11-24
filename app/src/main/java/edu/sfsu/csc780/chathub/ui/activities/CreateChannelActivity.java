@@ -101,7 +101,6 @@ public class CreateChannelActivity extends AppCompatActivity {
         }
         //user list
         userList.add(mUser.getDisplayName());
-        Log.d("Test", channelName+" "+channelType+" "+purpose+" "+mUser.getDisplayName());
         Channel channel = new Channel(userList, channelName, channelType, purpose);
         ChannelUtil.createChannel(channel);
         Intent resultIntent = new Intent();

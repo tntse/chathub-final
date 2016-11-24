@@ -45,9 +45,7 @@ public class ChannelSearchActivity extends AppCompatActivity {
         mLinearLayoutManager.setStackFromEnd(true);
         mMessageRecyclerView.setLayoutManager(mLinearLayoutManager);
 
-        mFirebaseAdapter = ChannelUtil.getFirebaseAdapter(this,
-                mLinearLayoutManager,
-                mMessageRecyclerView,
+        mFirebaseAdapter = ChannelUtil.getFirebaseAdapterForChannelList(this,
                 channelJoinClickListener);
         mMessageRecyclerView.setAdapter(mFirebaseAdapter);
     }

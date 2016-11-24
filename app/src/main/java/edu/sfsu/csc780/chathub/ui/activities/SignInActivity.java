@@ -16,7 +16,9 @@
 package edu.sfsu.csc780.chathub.ui.activities;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
@@ -37,7 +39,12 @@ import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.GoogleAuthProvider;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import edu.sfsu.csc780.chathub.R;
+import edu.sfsu.csc780.chathub.model.User;
+import edu.sfsu.csc780.chathub.ui.utils.UserUtil;
 
 public class SignInActivity extends AppCompatActivity implements
         GoogleApiClient.OnConnectionFailedListener, View.OnClickListener {
@@ -135,6 +142,17 @@ public class SignInActivity extends AppCompatActivity implements
                             Toast.makeText(SignInActivity.this, "Authentication failed.", Toast
                                     .LENGTH_SHORT).show();
                         } else {
+                            SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(SignInActivity.this);
+                            SharedPreferences.Editor edit = sp.edit();
+                            if(!sp.getBoolean("firstsignin", false)) {
+                                edit.putString("username", mAuth.getCurrentUser().getDisplayName());
+                                edit.putBoolean("firstsignin", true);
+                                List<String> channels = new ArrayList<>();
+                                channels.add("general");
+                                channels.add("random");
+                                UserUtil.createUser(new User(mAuth.getCurrentUser().getDisplayName(), channels));
+                                edit.commit();
+                            }
                             startActivity(new Intent(SignInActivity.this, MainActivity.class));
                             finish();
                         }
