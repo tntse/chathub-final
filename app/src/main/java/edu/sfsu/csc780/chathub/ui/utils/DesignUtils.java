@@ -102,6 +102,9 @@ public class DesignUtils {
             case 3:
                 newTheme = R.style.BlackTheme;
                 break;
+            case 5:
+                newTheme = R.style.SlackhubTheme;
+                break;
             default:
                 newTheme = R.style.AppTheme;
         }
