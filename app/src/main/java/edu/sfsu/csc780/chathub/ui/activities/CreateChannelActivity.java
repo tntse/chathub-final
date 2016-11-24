@@ -3,7 +3,11 @@ package edu.sfsu.csc780.chathub.ui.activities;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.widget.CompoundButton;
 import android.widget.EditText;
@@ -19,13 +23,14 @@ public class CreateChannelActivity extends AppCompatActivity {
     private TextView mChannelType;
     private TextView mChannelDescription;
     private Switch mTypeSwitch;
+    private Menu mMenu;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_create_channel);
 
-        ActionBar actionBar = getSupportActionBar();
+        final ActionBar actionBar = getSupportActionBar();
         actionBar.setDisplayHomeAsUpEnabled(true);
         actionBar.setTitle("Create channel");
 
@@ -48,6 +53,36 @@ public class CreateChannelActivity extends AppCompatActivity {
                 }
             }
         });
+
+        mChannelEditText.addTextChangedListener(new TextWatcher() {
+
+            @Override
+            public void afterTextChanged(Editable s) {}
+
+            @Override
+            public void beforeTextChanged(CharSequence s, int start,
+                                          int count, int after) {
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start,
+                                      int before, int count) {
+                if(s.length() < 21 && s.length() > 0 && !s.toString().contains(" ")
+                        && !s.toString().contains(".") && !s.toString().matches(".*[A-Z].*")) {
+                    mMenu.findItem(R.id.create_menu).setEnabled(true);
+                } else {
+                    mMenu.findItem(R.id.create_menu).setEnabled(false);
+                }
+            }
+        });
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.channel_activity_menu, menu);
+        mMenu = menu;
+        return true;
     }
 
     @Override
@@ -56,6 +91,16 @@ public class CreateChannelActivity extends AppCompatActivity {
         if(itemId == android.R.id.home){
             finish();
         }
+        return true;
+    }
+
+    @Override
+    public boolean onPrepareOptionsMenu (Menu menu){
+        super.onPrepareOptionsMenu(menu);
+
+        MenuItem myItem = menu.findItem(R.id.create_menu);
+        myItem.setEnabled(false);
+
         return true;
     }
 }
