@@ -1,5 +1,7 @@
 package edu.sfsu.csc780.chathub.ui.activities;
 
+import android.app.Activity;
+import android.content.Intent;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -14,7 +16,15 @@ import android.widget.EditText;
 import android.widget.Switch;
 import android.widget.TextView;
 
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+
+import java.util.ArrayList;
+import java.util.List;
+
 import edu.sfsu.csc780.chathub.R;
+import edu.sfsu.csc780.chathub.model.Channel;
+import edu.sfsu.csc780.chathub.ui.utils.ChannelUtil;
 
 public class CreateChannelActivity extends AppCompatActivity {
 
@@ -24,6 +34,8 @@ public class CreateChannelActivity extends AppCompatActivity {
     private TextView mChannelDescription;
     private Switch mTypeSwitch;
     private Menu mMenu;
+    private FirebaseAuth mAuth;
+    private FirebaseUser mUser;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -40,6 +52,8 @@ public class CreateChannelActivity extends AppCompatActivity {
         mPurposeEditText = (EditText) findViewById(R.id.purposeEditText);
         mTypeSwitch = (Switch) findViewById(R.id.public_private_switch);
         mTypeSwitch.setChecked(true);
+        mAuth = FirebaseAuth.getInstance();
+        mUser = mAuth.getCurrentUser();
 
         mTypeSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
@@ -77,6 +91,24 @@ public class CreateChannelActivity extends AppCompatActivity {
         });
     }
 
+    private void createChannel() {
+        String channelName = mChannelEditText.getText().toString();
+        String channelType = mChannelType.getText().toString();
+        String purpose = null;
+        List<String> userList = new ArrayList<>();
+        if(!mPurposeEditText.toString().equals("")) {
+            purpose = mPurposeEditText.getText().toString();
+        }
+        //user list
+        userList.add(mUser.getDisplayName());
+        Log.d("Test", channelName+" "+channelType+" "+purpose+" "+mUser.getDisplayName());
+        Channel channel = new Channel(userList, channelName, channelType, purpose);
+        ChannelUtil.createChannel(channel);
+        Intent resultIntent = new Intent();
+        setResult(Activity.RESULT_OK, resultIntent);
+        finish();
+    }
+
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         MenuInflater inflater = getMenuInflater();
@@ -90,6 +122,8 @@ public class CreateChannelActivity extends AppCompatActivity {
         int itemId = item.getItemId();
         if(itemId == android.R.id.home){
             finish();
+        } else if (itemId == R.id.create_menu) {
+            createChannel();
         }
         return true;
     }

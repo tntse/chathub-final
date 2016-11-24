@@ -20,7 +20,7 @@ public class Channel{
         this.channelName = channelName;
     }
 
-    public Channel(String channelTopic, String channelName, List<String> userList, String channelType) {
+    public Channel(List<String> userList, String channelName, String channelType, String channelTopic) {
         this(userList, channelType, channelName);
         this.channelTopic = channelTopic;
     }
@@ -35,10 +35,6 @@ public class Channel{
 
     public List<String> getUserList() {
         return userList;
-    }
-
-    public String getChatMessageList() {
-        return channelName;
     }
 
     public String getChannelType() {

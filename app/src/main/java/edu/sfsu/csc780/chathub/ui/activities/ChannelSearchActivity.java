@@ -1,5 +1,6 @@
 package edu.sfsu.csc780.chathub.ui.activities;
 
+import android.app.Activity;
 import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -69,5 +70,14 @@ public class ChannelSearchActivity extends AppCompatActivity {
                 startActivityForResult(i, REQUEST_NEW_CHANNEL);
         }
         return super.onOptionsItemSelected(item);
+    }
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if(requestCode == REQUEST_NEW_CHANNEL) {
+            if(resultCode == Activity.RESULT_OK) {
+                //TODO: Main Activity has to change layout to show changed channel
+                finish();
+            }
+        }
     }
 }
