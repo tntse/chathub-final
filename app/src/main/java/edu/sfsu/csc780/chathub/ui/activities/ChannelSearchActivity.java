@@ -35,6 +35,10 @@ public class ChannelSearchActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_channel_search);
 
+        this.getSupportActionBar().setHomeAsUpIndicator(R.drawable.ic_close_black_24dp);
+        this.getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        this.getSupportActionBar().setTitle("Channels");
+
         mMessageRecyclerView = (RecyclerView) findViewById(R.id.channel_list_recyclerview);
         mLinearLayoutManager = new LinearLayoutManager(this);
         mLinearLayoutManager.setStackFromEnd(true);
@@ -57,11 +61,13 @@ public class ChannelSearchActivity extends AppCompatActivity {
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
+            case android.R.id.home:
+                finish();
+                break;
             case R.id.create_menu:
                 Intent i = new Intent(this, CreateChannelActivity.class);
                 startActivityForResult(i, REQUEST_NEW_CHANNEL);
-            default:
-                return super.onOptionsItemSelected(item);
         }
+        return super.onOptionsItemSelected(item);
     }
 }

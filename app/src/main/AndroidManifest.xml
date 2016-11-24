@@ -29,14 +29,7 @@
         <activity android:name=".ui.activities.SignInActivity" />
         <activity android:name=".ui.activities.PreferencesActivity" />
         <activity android:name=".ui.activities.ChannelSearchActivity" />
-        <activity
-            android:name=".ui.activities.CreateChannelActivity"
-            android:label="@string/title_activity_create_channel"
-            android:parentActivityName=".ui.activities.ChannelSearchActivity">
-            <meta-data
-                android:name="android.support.PARENT_ACTIVITY"
-                android:value="edu.sfsu.csc780.chathub.ui.activities.ChannelSearchActivity" />
-        </activity>
+        <activity android:name=".ui.activities.CreateChannelActivity"></activity>
     </application>
 
 </manifest>
