@@ -47,6 +47,7 @@ import com.google.firebase.database.ValueEventListener;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import edu.sfsu.csc780.chathub.R;
 import edu.sfsu.csc780.chathub.model.Channel;
@@ -251,6 +252,10 @@ public class SignInActivity extends AppCompatActivity implements
             if(channel.child("channelName").getValue().equals(channelName)
                     && !channel.child("userList").toString().contains(mAuth.getCurrentUser().getDisplayName())) {
                 Log.d("Test", "I'm adding");
+                Map<String, Object> user = new HashMap<>();
+                user.put(mAuth.getCurrentUser().getDisplayName(), mAuth.getCurrentUser().getDisplayName());
+                DatabaseReference childReference = channel.child("userList").getRef();
+                childReference.updateChildren(user);
             }
         }
     }
