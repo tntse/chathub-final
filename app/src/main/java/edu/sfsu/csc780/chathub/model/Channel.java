@@ -1,5 +1,6 @@
 package edu.sfsu.csc780.chathub.model;
 
+import java.util.HashMap;
 import java.util.List;
 
 /**
@@ -7,26 +8,24 @@ import java.util.List;
  */
 
 public class Channel{
-    private ChannelType channelType;
-    private List<String> userList;
-    private List<ChatMessage> chatMessageList;
+    private String channelType;
+    private HashMap<String, String> userList;
+    private String channelName;
     private String channelTopic;
+    private boolean isPm;
 
     public Channel() {}
 
-    public Channel(List<String> userList, ChannelType channelType) {
+    public Channel(HashMap<String, String> userList, String channelType, String channelName, boolean isPm) {
         this.userList = userList;
         this.channelType = channelType;
+        this.channelName = channelName;
+        this.isPm = isPm;
     }
 
-    public Channel(List<String> userList, String channelTopic, ChannelType channelType) {
-        this(userList, channelType);
+    public Channel(HashMap<String, String> userList, String channelName, String channelType, String channelTopic, boolean isPm) {
+        this(userList, channelType, channelName, isPm);
         this.channelTopic = channelTopic;
-    }
-
-    public Channel(String channelTopic, List<ChatMessage> chatMessageList, List<String> userList, ChannelType channelType) {
-        this(userList, channelTopic, channelType);
-        this.chatMessageList = chatMessageList;
     }
 
     public String getChannelTopic() {
@@ -37,19 +36,31 @@ public class Channel{
         this.channelTopic = channelTopic;
     }
 
-    public List<String> getUserList() {
+    public HashMap<String, String> getUserList() {
         return userList;
     }
 
-    public List<ChatMessage> getChatMessageList() {
-        return chatMessageList;
-    }
-
-    public ChannelType getChannelType() {
+    public String getChannelType() {
         return channelType;
     }
 
-    public void setChannelType(ChannelType channelType) {
+    public void setChannelType(String channelType) {
         this.channelType = channelType;
+    }
+
+    public String getChannelName() {
+        return channelName;
+    }
+
+    public void setChannelName(String channelName) {
+        this.channelName = channelName;
+    }
+
+    public boolean isPm() {
+        return isPm;
+    }
+
+    public void setPm(boolean pm) {
+        isPm = pm;
     }
 }

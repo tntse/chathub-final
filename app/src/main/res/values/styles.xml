@@ -10,6 +10,8 @@
         <item name="android:colorButtonNormal">@drawable/button_selector</item>
         <item name="colorButtonNormal">@drawable/button_selector</item>
         <item name="android:buttonStyle">@style/ChatHubButtonStyle</item>
+        <item name="android:actionMenuTextColor">#FFFFFF</item>
+
     </style>
 
     <style name="ChatHubButtonStyle" parent="Widget.AppCompat.Button">
@@ -31,6 +33,11 @@
         <item name="colorPrimary">@color/almost_black</item>
         <item name="colorPrimaryDark">@color/black</item>
         <item name="colorAccent">@color/mellow_brown</item>
+    </style>
+    <style name="SlackhubTheme" parent="AppTheme">
+        <item name="colorPrimary">@color/colorPrimary</item>
+        <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
+        <item name="colorAccent">@color/colorAccent</item>
     </style>
 
 </resources>
