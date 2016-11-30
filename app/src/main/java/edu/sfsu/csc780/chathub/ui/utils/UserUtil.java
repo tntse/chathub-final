@@ -25,12 +25,12 @@ public class UserUtil {
     public static final String USER_CHILD = "users";
     private static DatabaseReference sFirebaseDatabaseReference =
             FirebaseDatabase.getInstance().getReference();
-    private static FirebaseAuth sFirebaseAuth;
+    private static FirebaseAuth sFirebaseAuth = FirebaseAuth.getInstance();
 
     public static void createUser(User user, Activity activity) {
         final SharedPreferences preferences =
                 PreferenceManager.getDefaultSharedPreferences(activity);
-        sFirebaseDatabaseReference.child(USER_CHILD).push().setValue(user);
+        sFirebaseDatabaseReference.child(USER_CHILD).child(sFirebaseAuth.getCurrentUser().getDisplayName()).setValue(user);
     }
 
     public static class UserViewHolder extends RecyclerView.ViewHolder {
