@@ -76,19 +76,35 @@ public class ChannelUtil {
 
         Query query = sFirebaseDatabaseReference.child(UserUtil.USER_CHILD).endAt(preferences.getString("username", ""));
 
-        final FirebaseRecyclerAdapter adapter = new FirebaseRecyclerAdapter<Channel,
+        final FirebaseRecyclerAdapter adapter = new FirebaseRecyclerAdapter<UserChannel,
                 ChannelViewHolder>(
-                Channel.class,
+                UserChannel.class,
                 R.layout.item_channel,
                 ChannelViewHolder.class,
                 query.getRef().child(CHANNELS_CHILD)) {
             @Override
             protected void populateViewHolder(final ChannelViewHolder viewHolder,
-                                              Channel channel, int position) {
+                                              UserChannel channel, int position) {
                 viewHolder.channelName.setText(channel.getChannelName());
             }
         };
 
         return adapter;
+    }
+
+    private class UserChannel {
+        String channelName;
+
+        public UserChannel (String channelName) {
+            this.channelName = channelName;
+        }
+
+        public String getChannelName() {
+            return channelName;
+        }
+
+        public void setChannelName(String channelName) {
+            this.channelName = channelName;
+        }
     }
 }
