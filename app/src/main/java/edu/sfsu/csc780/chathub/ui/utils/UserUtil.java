@@ -60,7 +60,7 @@ public class UserUtil {
             @Override
             protected void populateViewHolder(final UserViewHolder viewHolder,
                                               User user, int position) {
-                viewHolder.username.setText(user.getUsername());
+                viewHolder.username.setText((String)user.getUsername().keySet().toArray()[0]);
             }
         };
 

@@ -20,6 +20,7 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 import edu.sfsu.csc780.chathub.R;
@@ -95,13 +96,13 @@ public class CreateChannelActivity extends AppCompatActivity {
         String channelName = mChannelEditText.getText().toString();
         String channelType = mChannelType.getText().toString();
         String purpose = null;
-        List<String> userList = new ArrayList<>();
+        HashMap<String, String> userList = new HashMap<>();
         if(!mPurposeEditText.toString().equals("")) {
             purpose = mPurposeEditText.getText().toString();
         }
         //user list
-        userList.add(mUser.getDisplayName());
-        Channel channel = new Channel(userList, channelName, channelType, purpose);
+        userList.put(mUser.getDisplayName(), mUser.getDisplayName());
+        Channel channel = new Channel(userList, channelName, channelType, purpose, true);
         ChannelUtil.createChannel(channel);
         Intent resultIntent = new Intent();
         setResult(Activity.RESULT_OK, resultIntent);

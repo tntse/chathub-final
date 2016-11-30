@@ -1,5 +1,6 @@
 package edu.sfsu.csc780.chathub.model;
 
+import java.util.HashMap;
 import java.util.List;
 
 /**
@@ -8,20 +9,22 @@ import java.util.List;
 
 public class Channel{
     private String channelType;
-    private List<String> userList;
+    private HashMap<String, String> userList;
     private String channelName;
     private String channelTopic;
+    private boolean isPm;
 
     public Channel() {}
 
-    public Channel(List<String> userList, String channelType, String channelName) {
+    public Channel(HashMap<String, String> userList, String channelType, String channelName, boolean isPm) {
         this.userList = userList;
         this.channelType = channelType;
         this.channelName = channelName;
+        this.isPm = isPm;
     }
 
-    public Channel(List<String> userList, String channelName, String channelType, String channelTopic) {
-        this(userList, channelType, channelName);
+    public Channel(HashMap<String, String> userList, String channelName, String channelType, String channelTopic, boolean isPm) {
+        this(userList, channelType, channelName, isPm);
         this.channelTopic = channelTopic;
     }
 
@@ -33,7 +36,7 @@ public class Channel{
         this.channelTopic = channelTopic;
     }
 
-    public List<String> getUserList() {
+    public HashMap<String, String> getUserList() {
         return userList;
     }
 
@@ -51,5 +54,13 @@ public class Channel{
 
     public void setChannelName(String channelName) {
         this.channelName = channelName;
+    }
+
+    public boolean isPm() {
+        return isPm;
+    }
+
+    public void setPm(boolean pm) {
+        isPm = pm;
     }
 }

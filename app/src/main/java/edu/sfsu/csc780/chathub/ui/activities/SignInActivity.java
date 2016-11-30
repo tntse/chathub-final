@@ -40,6 +40,7 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.GoogleAuthProvider;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 import edu.sfsu.csc780.chathub.R;
@@ -147,10 +148,12 @@ public class SignInActivity extends AppCompatActivity implements
                             if(!sp.getBoolean("firstsignin", false)) {
                                 edit.putString("username", mAuth.getCurrentUser().getDisplayName());
                                 edit.putBoolean("firstsignin", true);
-                                List<String> channels = new ArrayList<>();
-                                channels.add("general");
-                                channels.add("random");
-                                UserUtil.createUser(new User(mAuth.getCurrentUser().getDisplayName(), channels));
+                                HashMap<String, String> channels = new HashMap<String, String>();
+                                channels.put("general", "general");
+                                channels.put("random", "random");
+                                HashMap<String, HashMap<String, String>> newUser = new HashMap<>();
+                                newUser.put(mAuth.getCurrentUser().getDisplayName(), channels);
+                                UserUtil.createUser(new User(newUser));
                                 edit.commit();
                             }
                             startActivity(new Intent(SignInActivity.this, MainActivity.class));
