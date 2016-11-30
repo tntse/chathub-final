@@ -10,8 +10,12 @@ import android.widget.TextView;
 
 import com.firebase.ui.database.FirebaseRecyclerAdapter;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+
+import java.util.HashMap;
+import java.util.Map;
 
 import edu.sfsu.csc780.chathub.R;
 import edu.sfsu.csc780.chathub.model.User;
@@ -65,5 +69,19 @@ public class UserUtil {
         };
 
         return adapter;
+    }
+
+    public static void addChannelToUserChannelList(DataSnapshot dataSnapshot, SharedPreferences sp, String channelName) {
+        for(DataSnapshot user : dataSnapshot.getChildren()) {
+            //If this is the correct user
+            //and this user doesn't have the channel already in their channel list
+            if(user.getKey().equals(sp.getString("username", "")) &&
+                    !user.child("username").child(sp.getString("username", "")).toString().contains(channelName)) {
+                DatabaseReference channelList = user.child("username").child(sp.getString("username", "")).getRef();
+                Map<String, Object> channel = new HashMap<>();
+                channel.put(channelName, channelName);
+                channelList.updateChildren(channel);
+            }
+        }
     }
 }

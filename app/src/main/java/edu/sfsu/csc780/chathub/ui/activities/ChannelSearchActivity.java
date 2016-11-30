@@ -50,17 +50,7 @@ public class ChannelSearchActivity extends AppCompatActivity {
                 @Override
                 public void onDataChange(DataSnapshot dataSnapshot) {
                     sFirebaseDatabaseReference.removeEventListener(this);
-                    for(DataSnapshot user : dataSnapshot.getChildren()) {
-                        //If this is the correct user
-                        //and this user doesn't have the channel already in their channel list
-                        if(user.getKey().equals(sp.getString("username", "")) &&
-                                !user.child("username").child(sp.getString("username", "")).toString().contains(channelName.getText().toString())) {
-                            DatabaseReference channelList = user.child("username").child(sp.getString("username", "")).getRef();
-                            Map<String, Object> channel = new HashMap<>();
-                            channel.put(channelName.getText().toString(), channelName.getText().toString());
-                            channelList.updateChildren(channel);
-                        }
-                    }
+                    UserUtil.addChannelToUserChannelList(dataSnapshot, sp, channelName.getText().toString());
                 }
 
                 @Override
