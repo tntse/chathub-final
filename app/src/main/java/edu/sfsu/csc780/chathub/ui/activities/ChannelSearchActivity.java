@@ -49,6 +49,7 @@ public class ChannelSearchActivity extends AppCompatActivity {
             sFirebaseDatabaseReference.child(UserUtil.USER_CHILD).addValueEventListener(new ValueEventListener() {
                 @Override
                 public void onDataChange(DataSnapshot dataSnapshot) {
+                    sFirebaseDatabaseReference.removeEventListener(this);
                     for(DataSnapshot user : dataSnapshot.getChildren()) {
                         //If this is the correct user
                         //and this user doesn't have the channel already in their channel list
@@ -60,7 +61,6 @@ public class ChannelSearchActivity extends AppCompatActivity {
                             channelList.updateChildren(channel);
                         }
                     }
-                    sFirebaseDatabaseReference.removeEventListener(this);
                 }
 
                 @Override
@@ -71,8 +71,8 @@ public class ChannelSearchActivity extends AppCompatActivity {
             sFirebaseDatabaseReference.child(ChannelUtil.CHANNELS_CHILD).addValueEventListener(new ValueEventListener() {
                 @Override
                 public void onDataChange(DataSnapshot dataSnapshot) {
-                    ChannelUtil.addUserToChannelList(dataSnapshot.getChildren(), channelName.getText().toString());
                     sFirebaseDatabaseReference.removeEventListener(this);
+                    ChannelUtil.addUserToChannelList(dataSnapshot.getChildren(), channelName.getText().toString());
                 }
 
                 @Override

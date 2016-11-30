@@ -106,10 +106,10 @@ public class ChannelUtil {
         for (DataSnapshot channel : channelList) {
             //Check if the channel name is the channel you want to update
             //Also, check if there isn't a user in the list already
-            Log.d("Test", channel.child("channelName").getValue().toString());
-            Log.d("Test", channelName);
+            Log.d("Test", Boolean.toString(channel.child("channelName").getValue().equals(channelName)
+                    && !channel.child("userList").getValue().toString().contains(sFirebaseAuth.getCurrentUser().getDisplayName())));
             if(channel.child("channelName").getValue().equals(channelName)
-                    && !channel.child("userList").toString().contains(sFirebaseAuth.getCurrentUser().getDisplayName())) {
+                    && !channel.child("userList").getValue().toString().contains(sFirebaseAuth.getCurrentUser().getDisplayName())) {
                 //Create the Map to store into firebase, the value is a String, but has to be an Object
                 //because updateChildren requires it
                 Map<String, Object> user = new HashMap<>();

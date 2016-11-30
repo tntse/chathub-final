@@ -202,6 +202,7 @@ public class SignInActivity extends AppCompatActivity implements
         }
     }
 
+    //TODO firebase keeps adding in channels and listening for events
     private void setInitialChannelAddEventListener() {
         sFirebaseDatabaseReference.child(ChannelUtil.CHANNELS_CHILD).addValueEventListener(new ValueEventListener() {
             @Override
@@ -219,6 +220,7 @@ public class SignInActivity extends AppCompatActivity implements
     private void checkIfChildChannelExists(DataSnapshot dataSnapshot, String channel) {
         boolean isChannelInFirebase = false;
         if(!dataSnapshot.getChildren().iterator().hasNext()) {
+            Log.d("Test", channel);
             createChannelIntoFirebase(channel);
         } else {
             //Goes through each of the channels in firebase
