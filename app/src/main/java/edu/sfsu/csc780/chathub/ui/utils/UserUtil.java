@@ -27,7 +27,9 @@ public class UserUtil {
             FirebaseDatabase.getInstance().getReference();
     private static FirebaseAuth sFirebaseAuth;
 
-    public static void createUser(User user) {
+    public static void createUser(User user, Activity activity) {
+        final SharedPreferences preferences =
+                PreferenceManager.getDefaultSharedPreferences(activity);
         sFirebaseDatabaseReference.child(USER_CHILD).push().setValue(user);
     }
 
@@ -46,10 +48,8 @@ public class UserUtil {
         }
     }
 
-    public static FirebaseRecyclerAdapter<User, UserViewHolder> getFirebaseAdapterForUserList(final Activity activity,
+    public static FirebaseRecyclerAdapter<User, UserViewHolder> getFirebaseAdapterForUserList(
                                                                                    final View.OnClickListener clickListener) {
-        final SharedPreferences preferences =
-                PreferenceManager.getDefaultSharedPreferences(activity);
         UserViewHolder.sChannelViewListener = clickListener;
         final FirebaseRecyclerAdapter adapter = new FirebaseRecyclerAdapter<User,
                 UserViewHolder>(

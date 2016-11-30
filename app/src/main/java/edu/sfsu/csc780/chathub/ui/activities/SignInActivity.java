@@ -177,6 +177,9 @@ public class SignInActivity extends AppCompatActivity implements
 
     private void addUserIfExists(SharedPreferences.Editor edit, DataSnapshot dataSnapshot, String username) {
         boolean isUserInFirebase = false;
+        edit.putBoolean("isLoggedIn", true);
+        edit.putString("username", mAuth.getCurrentUser().getDisplayName());
+        edit.commit();
         //This checks the edgecase where firebase doesn't have any users at all
         if(!dataSnapshot.getChildren().iterator().hasNext()) {
             putUserIntoFirebase();
@@ -194,9 +197,6 @@ public class SignInActivity extends AppCompatActivity implements
                 putUserIntoFirebase();
             }
         }
-        edit.putBoolean("isLoggedIn", true);
-        edit.putString("username", mAuth.getCurrentUser().getDisplayName());
-        edit.commit();
     }
 
     private void putUserIntoFirebase() {
@@ -205,6 +205,6 @@ public class SignInActivity extends AppCompatActivity implements
         channels.put("random", "random");
         HashMap<String, HashMap<String, String>> newUser = new HashMap<>();
         newUser.put(mAuth.getCurrentUser().getDisplayName(), channels);
-        UserUtil.createUser(new User(newUser));
+        UserUtil.createUser(new User(newUser), this);
     }
 }

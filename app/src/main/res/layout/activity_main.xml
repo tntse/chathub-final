@@ -99,10 +99,23 @@
         android:layout_width="wrap_content"
         android:layout_height="fill_parent"
         android:layout_gravity="start"
-        android:background="@color/colorPrimary"
-        app:itemTextAppearance="@style/Base.TextAppearance.AppCompat.Small"
-        app:itemTextColor="@color/sidebar"
-        app:headerLayout="@layout/channel_header"
-        app:menu="@menu/channel_list_menu"/>
+        android:background="@color/colorPrimary">
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <include layout="@layout/channel_header"
+                android:id="@+id/channelHeader"/>
+
+            <android.support.v7.widget.RecyclerView
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:id="@+id/navRecyclerView"
+                android:layout_below="@+id/channelHeader"/>
+
+        </RelativeLayout>
+
+    </android.support.design.widget.NavigationView>
 
 </android.support.v4.widget.DrawerLayout>

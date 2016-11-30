@@ -71,6 +71,7 @@ import java.util.Date;
 
 import edu.sfsu.csc780.chathub.R;
 import edu.sfsu.csc780.chathub.model.ChatMessage;
+import edu.sfsu.csc780.chathub.ui.utils.ChannelUtil;
 import edu.sfsu.csc780.chathub.ui.utils.MessageUtil;
 import edu.sfsu.csc780.chathub.ui.utils.DesignUtils;
 import edu.sfsu.csc780.chathub.ui.utils.MapLoader;
@@ -124,6 +125,13 @@ public class MainActivity extends AppCompatActivity
         }
     };
 
+    private View.OnClickListener mChannelClickListener = new View.OnClickListener() {
+        @Override
+        public void onClick(View view) {
+            //Change channel here
+        }
+    };
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -160,7 +168,7 @@ public class MainActivity extends AppCompatActivity
         mLinearLayoutManager = new LinearLayoutManager(this);
         mLinearLayoutManager.setStackFromEnd(true);
         mMessageRecyclerView.setLayoutManager(mLinearLayoutManager);
-        mChannelAdd = (RelativeLayout) mNavigationView.getHeaderView(0).findViewById(R.id.channelAdd);
+        mChannelAdd = (RelativeLayout) findViewById(R.id.channelAdd);
 
         mFirebaseAdapter = MessageUtil.getFirebaseAdapter(this,
                 this,  /* MessageLoadListener */
@@ -240,6 +248,12 @@ public class MainActivity extends AppCompatActivity
                 startActivity(intent);
             }
         });
+
+        RecyclerView navRecyclerView = (RecyclerView) findViewById(R.id.navRecyclerView);
+        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this);
+        navRecyclerView.setLayoutManager(linearLayoutManager);
+
+        navRecyclerView.setAdapter(ChannelUtil.getFirebaseAdapterForUserChannelList(this, mChannelClickListener));
     }
 
     private void dispatchTakePhotoIntent() {
@@ -298,7 +312,7 @@ public class MainActivity extends AppCompatActivity
                 mAuth.signOut();
                 Auth.GoogleSignInApi.signOut(mGoogleApiClient);
                 mUsername = ANONYMOUS;
-                mSharedPreferences.edit().putBoolean("isLoggedIn", true).commit();
+                mSharedPreferences.edit().putBoolean("isLoggedIn", false).commit();
                 startActivity(new Intent(this, SignInActivity.class));
                 return true;
             case R.id.preferences_menu:
