@@ -298,6 +298,7 @@ public class MainActivity extends AppCompatActivity
                 mAuth.signOut();
                 Auth.GoogleSignInApi.signOut(mGoogleApiClient);
                 mUsername = ANONYMOUS;
+                mSharedPreferences.edit().putBoolean("isLoggedIn", true).commit();
                 startActivity(new Intent(this, SignInActivity.class));
                 return true;
             case R.id.preferences_menu:

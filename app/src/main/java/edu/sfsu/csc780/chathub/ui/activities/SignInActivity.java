@@ -38,6 +38,11 @@ import com.google.firebase.auth.AuthCredential;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.GoogleAuthProvider;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -59,6 +64,8 @@ public class SignInActivity extends AppCompatActivity implements
 
     // Firebase instance variables
     private FirebaseAuth mAuth;
+    private static DatabaseReference sFirebaseDatabaseReference =
+            FirebaseDatabase.getInstance().getReference();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -143,23 +150,61 @@ public class SignInActivity extends AppCompatActivity implements
                             Toast.makeText(SignInActivity.this, "Authentication failed.", Toast
                                     .LENGTH_SHORT).show();
                         } else {
-                            SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(SignInActivity.this);
-                            SharedPreferences.Editor edit = sp.edit();
-                            if(!sp.getBoolean("firstsignin", false)) {
-                                edit.putString("username", mAuth.getCurrentUser().getDisplayName());
-                                edit.putBoolean("firstsignin", true);
-                                HashMap<String, String> channels = new HashMap<String, String>();
-                                channels.put("general", "general");
-                                channels.put("random", "random");
-                                HashMap<String, HashMap<String, String>> newUser = new HashMap<>();
-                                newUser.put(mAuth.getCurrentUser().getDisplayName(), channels);
-                                UserUtil.createUser(new User(newUser));
-                                edit.commit();
-                            }
-                            startActivity(new Intent(SignInActivity.this, MainActivity.class));
-                            finish();
+                            setUserAddEventListener(mAuth.getCurrentUser().getDisplayName());
                         }
                     }
                 });
+    }
+
+    private void setUserAddEventListener(final String username) {
+        sFirebaseDatabaseReference.child(UserUtil.USER_CHILD).addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(SignInActivity.this);
+                SharedPreferences.Editor edit = sp.edit();
+
+                if(!sp.getBoolean("isLoggedIn", false)) {
+                    addUserIfExists(edit, dataSnapshot, username);
+                }
+                startActivity(new Intent(SignInActivity.this, MainActivity.class));
+                finish();
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {}
+        });
+    }
+
+    private void addUserIfExists(SharedPreferences.Editor edit, DataSnapshot dataSnapshot, String username) {
+        boolean isUserInFirebase = false;
+        //This checks the edgecase where firebase doesn't have any users at all
+        if(!dataSnapshot.getChildren().iterator().hasNext()) {
+            putUserIntoFirebase();
+        } else {
+            //Goes through each of the users in firebase
+            for(DataSnapshot children : dataSnapshot.getChildren()) {
+                //Goes deep into the user json
+                //Basically chathub/users/UNIQUE_KEY/{some-user-name}
+                //then compares {some-user-name} with the username
+                if(children.getChildren().iterator().next().getChildren().iterator().next().getKey().equals(username)) {
+                    isUserInFirebase = true;
+                }
+            }
+            if(!isUserInFirebase) {
+                putUserIntoFirebase();
+            }
+        }
+        edit.putBoolean("isLoggedIn", true);
+        edit.putString("username", mAuth.getCurrentUser().getDisplayName());
+        edit.commit();
+    }
+
+    private void putUserIntoFirebase() {
+        HashMap<String, String> channels = new HashMap<String, String>();
+        channels.put("general", "general");
+        channels.put("random", "random");
+        HashMap<String, HashMap<String, String>> newUser = new HashMap<>();
+        newUser.put(mAuth.getCurrentUser().getDisplayName(), channels);
+        UserUtil.createUser(new User(newUser));
     }
 }
