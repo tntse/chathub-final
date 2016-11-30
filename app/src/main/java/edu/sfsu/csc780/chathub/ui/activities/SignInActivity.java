@@ -49,7 +49,9 @@ import java.util.HashMap;
 import java.util.List;
 
 import edu.sfsu.csc780.chathub.R;
+import edu.sfsu.csc780.chathub.model.Channel;
 import edu.sfsu.csc780.chathub.model.User;
+import edu.sfsu.csc780.chathub.ui.utils.ChannelUtil;
 import edu.sfsu.csc780.chathub.ui.utils.UserUtil;
 
 public class SignInActivity extends AppCompatActivity implements
@@ -151,6 +153,7 @@ public class SignInActivity extends AppCompatActivity implements
                                     .LENGTH_SHORT).show();
                         } else {
                             setUserAddEventListener(mAuth.getCurrentUser().getDisplayName());
+                            setInitialChannelAddEventListener();
                         }
                     }
                 });
@@ -163,9 +166,8 @@ public class SignInActivity extends AppCompatActivity implements
                 SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(SignInActivity.this);
                 SharedPreferences.Editor edit = sp.edit();
 
-                if(!sp.getBoolean("isLoggedIn", false)) {
-                    addUserIfExists(edit, dataSnapshot, username);
-                }
+                addUserIfExists(edit, dataSnapshot, username);
+                sFirebaseDatabaseReference.removeEventListener(this);
                 startActivity(new Intent(SignInActivity.this, MainActivity.class));
                 finish();
             }
@@ -177,7 +179,6 @@ public class SignInActivity extends AppCompatActivity implements
 
     private void addUserIfExists(SharedPreferences.Editor edit, DataSnapshot dataSnapshot, String username) {
         boolean isUserInFirebase = false;
-        edit.putBoolean("isLoggedIn", true);
         //TODO: Change to email to prevent same display name
         edit.putString("username", mAuth.getCurrentUser().getDisplayName());
         edit.commit();
@@ -186,9 +187,9 @@ public class SignInActivity extends AppCompatActivity implements
             putUserIntoFirebase();
         } else {
             //Goes through each of the users in firebase
-            for(DataSnapshot children : dataSnapshot.getChildren()) {
+            for (DataSnapshot children : dataSnapshot.getChildren()) {
                 //Goes deep into the user json
-                //Basically chathub/users/UNIQUE_KEY/{some-user-name}
+                //Basically chathub/users/{some-user-name}/username/{some-user-name}
                 //then compares {some-user-name} with the username
                 if(children.getChildren().iterator().next().getChildren().iterator().next().getKey().equals(username)) {
                     isUserInFirebase = true;
@@ -196,6 +197,60 @@ public class SignInActivity extends AppCompatActivity implements
             }
             if(!isUserInFirebase) {
                 putUserIntoFirebase();
+            }
+        }
+    }
+
+    private void setInitialChannelAddEventListener() {
+        sFirebaseDatabaseReference.child(ChannelUtil.CHANNELS_CHILD).addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                checkIfChildChannelExists(dataSnapshot, "general");
+                checkIfChildChannelExists(dataSnapshot, "random");
+                sFirebaseDatabaseReference.removeEventListener(this);
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {}
+        });
+    }
+
+    private void checkIfChildChannelExists(DataSnapshot dataSnapshot, String channel) {
+        boolean isChannelInFirebase = false;
+        if(!dataSnapshot.getChildren().iterator().hasNext()) {
+            createChannelIntoFirebase(channel);
+        } else {
+            //Goes through each of the channels in firebase
+            for (DataSnapshot children : dataSnapshot.getChildren()) {
+                //Goes deep into the channels json
+                //Basically chathub/channels/UNIQUE_KEY/channelName
+                if (children.getChildren().iterator().next().getValue().equals(channel)) {
+                    isChannelInFirebase = true;
+                }
+            }
+            if(!isChannelInFirebase) {
+                createChannelIntoFirebase(channel);
+            } else {
+                addUserToChannelList(dataSnapshot.getChildren(), channel);
+            }
+        }
+    }
+
+    private void createChannelIntoFirebase(String channelName) {
+        HashMap<String, String> userList = new HashMap<>();
+        //user list
+        userList.put(mAuth.getCurrentUser().getDisplayName(), mAuth.getCurrentUser().getDisplayName());
+        Channel channel = new Channel(userList, channelName, "Public", "General Purpose", true);
+        ChannelUtil.createChannel(channel);
+    }
+
+    //TODO: For some reason, it adds Random channel twice?
+    private void addUserToChannelList(Iterable<DataSnapshot> channelList, String channelName) {
+        //This method is for adding a user to random's or general's userlist
+        for (DataSnapshot channel : channelList) {
+            if(channel.child("channelName").getValue().equals(channelName)
+                    && !channel.child("userList").toString().contains(mAuth.getCurrentUser().getDisplayName())) {
+                Log.d("Test", "I'm adding");
             }
         }
     }

@@ -140,6 +140,7 @@ public class MainActivity extends AppCompatActivity
                     mLinearLayoutManager,
                     mMessageRecyclerView,
                     mImageClickListener);
+            mMessageRecyclerView.setAdapter(mFirebaseAdapter);
         }
     };
 
@@ -323,7 +324,6 @@ public class MainActivity extends AppCompatActivity
                 mAuth.signOut();
                 Auth.GoogleSignInApi.signOut(mGoogleApiClient);
                 mUsername = ANONYMOUS;
-                mSharedPreferences.edit().putBoolean("isLoggedIn", false).commit();
                 startActivity(new Intent(this, SignInActivity.class));
                 return true;
             case R.id.preferences_menu:
