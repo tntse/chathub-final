@@ -11,8 +11,12 @@ import android.widget.TextView;
 
 import com.firebase.ui.database.FirebaseRecyclerAdapter;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+
+import java.util.HashMap;
+import java.util.Map;
 
 import edu.sfsu.csc780.chathub.R;
 import edu.sfsu.csc780.chathub.model.Channel;
@@ -28,7 +32,7 @@ public class ChannelUtil {
     public static final String CHANNELS_CHILD = "channels";
     private static DatabaseReference sFirebaseDatabaseReference =
             FirebaseDatabase.getInstance().getReference();
-    private static FirebaseAuth sFirebaseAuth;
+    private static FirebaseAuth sFirebaseAuth = FirebaseAuth.getInstance();
 
     public static void createChannel(Channel channel) {
         sFirebaseDatabaseReference.child(CHANNELS_CHILD).push().setValue(channel);
@@ -95,4 +99,26 @@ public class ChannelUtil {
         return adapter;
     }
 
+    //TODO: For some reason, it adds Random channel twice?
+    public static void addUserToChannelList(Iterable<DataSnapshot> channelList, String channelName) {
+        //This method is for adding a user to random's or general's userlist
+        //Iterate through the list of channels
+        for (DataSnapshot channel : channelList) {
+            //Check if the channel name is the channel you want to update
+            //Also, check if there isn't a user in the list already
+            Log.d("Test", channel.child("channelName").getValue().toString());
+            Log.d("Test", channelName);
+            if(channel.child("channelName").getValue().equals(channelName)
+                    && !channel.child("userList").toString().contains(sFirebaseAuth.getCurrentUser().getDisplayName())) {
+                //Create the Map to store into firebase, the value is a String, but has to be an Object
+                //because updateChildren requires it
+                Map<String, Object> user = new HashMap<>();
+                user.put(sFirebaseAuth.getCurrentUser().getDisplayName(), sFirebaseAuth.getCurrentUser().getDisplayName());
+                //navigate to chathub/channels/{UNIQUE_KEY}/userlist
+                DatabaseReference childReference = channel.child("userList").getRef();
+                //updateChildren does not overwrite
+                childReference.updateChildren(user);
+            }
+        }
+    }
 }

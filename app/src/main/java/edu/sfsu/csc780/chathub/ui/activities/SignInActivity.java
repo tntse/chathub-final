@@ -232,7 +232,7 @@ public class SignInActivity extends AppCompatActivity implements
             if(!isChannelInFirebase) {
                 createChannelIntoFirebase(channel);
             } else {
-                addUserToChannelList(dataSnapshot.getChildren(), channel);
+                ChannelUtil.addUserToChannelList(dataSnapshot.getChildren(), channel);
             }
         }
     }
@@ -243,21 +243,6 @@ public class SignInActivity extends AppCompatActivity implements
         userList.put(mAuth.getCurrentUser().getDisplayName(), mAuth.getCurrentUser().getDisplayName());
         Channel channel = new Channel(userList, channelName, "Public", "General Purpose", true);
         ChannelUtil.createChannel(channel);
-    }
-
-    //TODO: For some reason, it adds Random channel twice?
-    private void addUserToChannelList(Iterable<DataSnapshot> channelList, String channelName) {
-        //This method is for adding a user to random's or general's userlist
-        for (DataSnapshot channel : channelList) {
-            if(channel.child("channelName").getValue().equals(channelName)
-                    && !channel.child("userList").toString().contains(mAuth.getCurrentUser().getDisplayName())) {
-                Log.d("Test", "I'm adding");
-                Map<String, Object> user = new HashMap<>();
-                user.put(mAuth.getCurrentUser().getDisplayName(), mAuth.getCurrentUser().getDisplayName());
-                DatabaseReference childReference = channel.child("userList").getRef();
-                childReference.updateChildren(user);
-            }
-        }
     }
 
     private void putUserIntoFirebase() {
