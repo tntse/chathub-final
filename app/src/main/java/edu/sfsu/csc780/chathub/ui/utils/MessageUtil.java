@@ -66,6 +66,7 @@ public class MessageUtil {
         }
     }
 
+    //TODO: Change message layout based on channel
     public static FirebaseRecyclerAdapter getFirebaseAdapter(final Activity activity,
                                                              MessageLoadListener listener,
                                                              final LinearLayoutManager linearManager,

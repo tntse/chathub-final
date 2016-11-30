@@ -27,6 +27,7 @@ public class ChannelSearchActivity extends AppCompatActivity {
         @Override
         public void onClick(View view) {
             //Joins the selected channel here
+            //Adds to user's channels
         }
     };
 

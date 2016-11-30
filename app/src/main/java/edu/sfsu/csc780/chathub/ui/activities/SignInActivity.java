@@ -178,6 +178,7 @@ public class SignInActivity extends AppCompatActivity implements
     private void addUserIfExists(SharedPreferences.Editor edit, DataSnapshot dataSnapshot, String username) {
         boolean isUserInFirebase = false;
         edit.putBoolean("isLoggedIn", true);
+        //TODO: Change to email to prevent same display name
         edit.putString("username", mAuth.getCurrentUser().getDisplayName());
         edit.commit();
         //This checks the edgecase where firebase doesn't have any users at all

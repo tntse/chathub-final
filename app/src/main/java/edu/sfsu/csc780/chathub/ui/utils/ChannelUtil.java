@@ -75,7 +75,7 @@ public class ChannelUtil {
         final SharedPreferences preferences =
                 PreferenceManager.getDefaultSharedPreferences(activity);
         ChannelViewHolder.sChannelViewListener = clickListener;
-        
+
         final FirebaseRecyclerAdapter adapter = new FirebaseRecyclerAdapter<String,
                 ChannelViewHolder>(
                 String.class,

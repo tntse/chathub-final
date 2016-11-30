@@ -48,6 +48,7 @@ import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.bumptech.glide.load.resource.bitmap.GlideBitmapDrawable;
@@ -112,6 +113,7 @@ public class MainActivity extends AppCompatActivity
     private ImageButton mImageButton;
     private ImageButton mPhotoButton;
     private int mSavedTheme;
+    private String mCurrentChannel;
     private ImageButton mLocationButton;
     private View.OnClickListener mImageClickListener = new View.OnClickListener() {
         @Override
@@ -129,6 +131,15 @@ public class MainActivity extends AppCompatActivity
         @Override
         public void onClick(View view) {
             //Change channel here
+            TextView channel = (TextView) view.findViewById(R.id.channelNameText);
+            SharedPreferences.Editor edit = mSharedPreferences.edit();
+            edit.putString("currentChannel", channel.getText().toString());
+            mCurrentChannel = mSharedPreferences.getString("currentChannel", "general");
+            mFirebaseAdapter = MessageUtil.getFirebaseAdapter(MainActivity.this,
+                    MainActivity.this,  /* MessageLoadListener */
+                    mLinearLayoutManager,
+                    mMessageRecyclerView,
+                    mImageClickListener);
         }
     };
 
@@ -154,7 +165,7 @@ public class MainActivity extends AppCompatActivity
             }
         }
 
-        final String currentChannel = mSharedPreferences.getString("channelName", "general");
+        mCurrentChannel = mSharedPreferences.getString("currentChannel", "general");
 
         mGoogleApiClient = new GoogleApiClient.Builder(this)
                 .enableAutoManage(this /* FragmentActivity */, this /* OnConnectionFailedListener */)
@@ -210,7 +221,7 @@ public class MainActivity extends AppCompatActivity
                         ChatMessage(mMessageEditText.getText().toString(),
                         mUsername,
                         mPhotoUrl,
-                        currentChannel);
+                        mCurrentChannel);
                 MessageUtil.send(chatMessage);
                 mMessageEditText.setText("");
             }
