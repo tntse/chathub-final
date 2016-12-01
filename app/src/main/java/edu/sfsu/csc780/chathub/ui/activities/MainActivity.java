@@ -268,7 +268,7 @@ public class MainActivity extends AppCompatActivity
         RecyclerView navRecyclerView = (RecyclerView) findViewById(R.id.navRecyclerView);
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this);
         navRecyclerView.setLayoutManager(linearLayoutManager);
-
+        //TODO When a new channel is created, it is not clickable until you exit the app
         navRecyclerView.setAdapter(ChannelUtil.getFirebaseAdapterForUserChannelList(this, mChannelClickListener));
     }
 

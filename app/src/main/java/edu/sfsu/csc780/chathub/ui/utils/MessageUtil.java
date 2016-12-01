@@ -67,6 +67,8 @@ public class MessageUtil {
         }
     }
 
+    //TODO Cannot filter by channels, maybe change channel name to be the key to a list of messages
+    //belonging to the channel
     public static FirebaseRecyclerAdapter getFirebaseAdapter(final Activity activity,
                                                              MessageLoadListener listener,
                                                              final LinearLayoutManager linearManager,
