@@ -78,6 +78,7 @@ import edu.sfsu.csc780.chathub.ui.utils.DesignUtils;
 import edu.sfsu.csc780.chathub.ui.utils.MapLoader;
 import edu.sfsu.csc780.chathub.ui.utils.LocationUtils;
 import edu.sfsu.csc780.chathub.ui.fragments.ImageDialogFragment;
+import edu.sfsu.csc780.chathub.ui.utils.UserUtil;
 
 public class MainActivity extends AppCompatActivity
         implements GoogleApiClient.OnConnectionFailedListener,
@@ -271,6 +272,11 @@ public class MainActivity extends AppCompatActivity
         navRecyclerView.setLayoutManager(linearLayoutManager);
         //TODO When a new channel is created, it is not clickable until you exit the app
         navRecyclerView.setAdapter(ChannelUtil.getFirebaseAdapterForUserChannelList(this, mChannelClickListener));
+
+        RecyclerView userListRecyclerView = (RecyclerView) findViewById(R.id.userListRecyclerView);
+        LinearLayoutManager linearLayoutManager2 = new LinearLayoutManager(this);
+        userListRecyclerView.setLayoutManager(linearLayoutManager2);
+        userListRecyclerView.setAdapter(UserUtil.getFirebaseAdapterForUserList(mChannelClickListener));
     }
 
     private void dispatchTakePhotoIntent() {
