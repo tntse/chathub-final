@@ -137,12 +137,13 @@ public class MainActivity extends AppCompatActivity
             edit.apply();
             mCurrentChannel = mSharedPreferences.getString("currentChannel", "general");
             Toast.makeText(MainActivity.this, channel.getText().toString(), Toast.LENGTH_SHORT).show();
-            mFirebaseAdapter.notifyDataSetChanged();
-//            mFirebaseAdapter = MessageUtil.getFirebaseAdapter(MainActivity.this,
-//                    MainActivity.this,  /* MessageLoadListener */
-//                    mLinearLayoutManager,
-//                    mMessageRecyclerView,
-//                    mImageClickListener);
+            mFirebaseAdapter = MessageUtil.getFirebaseAdapter(MainActivity.this,
+                    MainActivity.this,  /* MessageLoadListener */
+                    mLinearLayoutManager,
+                    mMessageRecyclerView,
+                    mImageClickListener);
+            mMessageRecyclerView.swapAdapter(mFirebaseAdapter, false);
+//            mFirebaseAdapter.cleanup();
 
 //            mMessageRecyclerView.setAdapter(mFirebaseAdapter);
         }
@@ -227,7 +228,7 @@ public class MainActivity extends AppCompatActivity
                         mUsername,
                         mPhotoUrl,
                         mCurrentChannel);
-                MessageUtil.send(chatMessage);
+                MessageUtil.send(chatMessage, MainActivity.this);
                 mMessageEditText.setText("");
             }
         });
@@ -431,7 +432,7 @@ public class MainActivity extends AppCompatActivity
                         ChatMessage(mMessageEditText.getText().toString(),
                         mUsername,
                         mPhotoUrl, imageReference.toString());
-                MessageUtil.send(chatMessage);
+                MessageUtil.send(chatMessage, MainActivity.this);
                 mMessageEditText.setText("");
             }
         });
