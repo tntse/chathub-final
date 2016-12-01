@@ -23,6 +23,7 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.Query;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 
@@ -66,7 +67,6 @@ public class MessageUtil {
         }
     }
 
-    //TODO: Change message layout based on channel
     public static FirebaseRecyclerAdapter getFirebaseAdapter(final Activity activity,
                                                              MessageLoadListener listener,
                                                              final LinearLayoutManager linearManager,
@@ -76,6 +76,7 @@ public class MessageUtil {
                 PreferenceManager.getDefaultSharedPreferences(activity);
         sAdapterListener = listener;
         MessageViewHolder.sMessageViewListener = clickListener;
+
         final FirebaseRecyclerAdapter adapter = new FirebaseRecyclerAdapter<ChatMessage,
                 MessageViewHolder>(
                 ChatMessage.class,
@@ -86,77 +87,11 @@ public class MessageUtil {
             protected void populateViewHolder(final MessageViewHolder viewHolder,
                                               ChatMessage chatMessage, int position) {
                 sAdapterListener.onLoadComplete();
-                viewHolder.messageTextView.setText(chatMessage.getText());
-                viewHolder.messengerTextView.setText(chatMessage.getName());
-                if (chatMessage.getPhotoUrl() == null) {
-                    viewHolder.messengerImageView
-                            .setImageDrawable(ContextCompat
-                                    .getDrawable(activity,
-                                            R.drawable.ic_account_circle_black_36dp));
-                } else {
-                    SimpleTarget target = new SimpleTarget<Bitmap>() {
-                        @Override
-                        public void onResourceReady(Bitmap bitmap, GlideAnimation glideAnimation) {
-                            viewHolder.messengerImageView.setImageBitmap(bitmap);
-                            final String palettePreference = activity.getString(R.string
-                                    .auto_palette_preference);
-
-                            if (preferences.getBoolean(palettePreference, false)) {
-                                DesignUtils.setBackgroundFromPalette(bitmap, viewHolder
-                                        .messageLayout);
-                            } else {
-                                viewHolder.messageLayout.setBackground(
-                                        activity.getResources().getDrawable(
-                                                R.drawable.message_background));
-                            }
-
-                        }
-                    };
-                    Glide.with(activity)
-                            .load(chatMessage.getPhotoUrl())
-                            .asBitmap()
-                            .into(target);
+                if(chatMessage.getChannelName().equals(preferences.getString("currentChannel", ""))) {
+                    setPhotoAndMessage(viewHolder, chatMessage, activity, preferences);
+                    setImageMessage(chatMessage, viewHolder, activity);
+                    setTimestamp(chatMessage, viewHolder, activity);
                 }
-
-                if (chatMessage.getImageUrl() != null) {
-
-                    viewHolder.messageImageView.setVisibility(View.VISIBLE);
-                    viewHolder.messageTextView.setVisibility(View.GONE);
-
-                    try {
-                        final StorageReference gsReference =
-                                sStorage.getReferenceFromUrl(chatMessage.getImageUrl());
-                        gsReference.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
-                            @Override
-                            public void onSuccess(Uri uri) {
-                                Glide.with(activity)
-                                        .load(uri)
-                                        .into(viewHolder.messageImageView);
-                            }
-                        }).addOnFailureListener(new OnFailureListener() {
-                            @Override
-                            public void onFailure(@NonNull Exception exception) {
-                                Log.e(LOG_TAG, "Could not load image for message", exception);
-                            }
-                        });
-                    } catch (IllegalArgumentException e) {
-                        viewHolder.messageTextView.setText("Error loading image");
-                        Log.e(LOG_TAG, e.getMessage() + " : " + chatMessage.getImageUrl());
-                    }
-                } else {
-                    viewHolder.messageImageView.setVisibility(View.GONE);
-                    viewHolder.messageTextView.setVisibility(View.VISIBLE);
-                }
-
-                long timestamp = chatMessage.getTimestamp();
-                if (timestamp == 0 || timestamp == chatMessage.NO_TIMESTAMP ) {
-                    viewHolder.timestampTextView.setVisibility(View.GONE);
-                } else {
-                    viewHolder.timestampTextView.setText(DesignUtils.formatTime(activity,
-                            timestamp));
-                    viewHolder.timestampTextView.setVisibility(View.VISIBLE);
-                }
-
             }
         };
 
@@ -174,6 +109,91 @@ public class MessageUtil {
             }
         });
         return adapter;
+    }
+
+    private static void setPhotoAndMessage(final MessageViewHolder viewHolder,
+                                    ChatMessage chatMessage,
+                                    final Activity activity,
+                                    final SharedPreferences preferences) {
+        viewHolder.messageTextView.setText(chatMessage.getText());
+        viewHolder.messengerTextView.setText(chatMessage.getName());
+        if (chatMessage.getPhotoUrl() == null) {
+            viewHolder.messengerImageView
+                    .setImageDrawable(ContextCompat
+                            .getDrawable(activity,
+                                    R.drawable.ic_account_circle_black_36dp));
+        } else {
+            SimpleTarget target = new SimpleTarget<Bitmap>() {
+                @Override
+                public void onResourceReady(Bitmap bitmap, GlideAnimation glideAnimation) {
+                    viewHolder.messengerImageView.setImageBitmap(bitmap);
+                    final String palettePreference = activity.getString(R.string
+                            .auto_palette_preference);
+
+                    if (preferences.getBoolean(palettePreference, false)) {
+                        DesignUtils.setBackgroundFromPalette(bitmap, viewHolder
+                                .messageLayout);
+                    } else {
+                        viewHolder.messageLayout.setBackground(
+                                activity.getResources().getDrawable(
+                                        R.drawable.message_background));
+                    }
+
+                }
+            };
+            Glide.with(activity)
+                    .load(chatMessage.getPhotoUrl())
+                    .asBitmap()
+                    .into(target);
+        }
+    }
+
+    private static void setImageMessage(ChatMessage chatMessage,
+                                        final MessageViewHolder viewHolder,
+                                        final Activity activity) {
+        if (chatMessage.getImageUrl() != null) {
+
+            viewHolder.messageImageView.setVisibility(View.VISIBLE);
+            viewHolder.messageTextView.setVisibility(View.GONE);
+
+            try {
+                final StorageReference gsReference =
+                        sStorage.getReferenceFromUrl(chatMessage.getImageUrl());
+                gsReference.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
+                    @Override
+                    public void onSuccess(Uri uri) {
+                        Glide.with(activity)
+                                .load(uri)
+                                .into(viewHolder.messageImageView);
+                    }
+                }).addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception exception) {
+                        Log.e(LOG_TAG, "Could not load image for message", exception);
+                    }
+                });
+            } catch (IllegalArgumentException e) {
+                viewHolder.messageTextView.setText("Error loading image");
+                Log.e(LOG_TAG, e.getMessage() + " : " + chatMessage.getImageUrl());
+            }
+        } else {
+            viewHolder.messageImageView.setVisibility(View.GONE);
+            viewHolder.messageTextView.setVisibility(View.VISIBLE);
+        }
+
+    }
+
+    private static void setTimestamp(ChatMessage chatMessage,
+                                     final MessageViewHolder viewHolder,
+                                     Activity activity) {
+        long timestamp = chatMessage.getTimestamp();
+        if (timestamp == 0 || timestamp == chatMessage.NO_TIMESTAMP ) {
+            viewHolder.timestampTextView.setVisibility(View.GONE);
+        } else {
+            viewHolder.timestampTextView.setText(DesignUtils.formatTime(activity,
+                    timestamp));
+            viewHolder.timestampTextView.setVisibility(View.VISIBLE);
+        }
     }
 
     public static StorageReference getImageStorageReference(FirebaseUser user, Uri uri) {

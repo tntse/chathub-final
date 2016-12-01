@@ -134,13 +134,17 @@ public class MainActivity extends AppCompatActivity
             TextView channel = (TextView) view.findViewById(R.id.channelNameText);
             SharedPreferences.Editor edit = mSharedPreferences.edit();
             edit.putString("currentChannel", channel.getText().toString());
+            edit.apply();
             mCurrentChannel = mSharedPreferences.getString("currentChannel", "general");
-            mFirebaseAdapter = MessageUtil.getFirebaseAdapter(MainActivity.this,
-                    MainActivity.this,  /* MessageLoadListener */
-                    mLinearLayoutManager,
-                    mMessageRecyclerView,
-                    mImageClickListener);
-            mMessageRecyclerView.setAdapter(mFirebaseAdapter);
+            Toast.makeText(MainActivity.this, channel.getText().toString(), Toast.LENGTH_SHORT).show();
+            mFirebaseAdapter.notifyDataSetChanged();
+//            mFirebaseAdapter = MessageUtil.getFirebaseAdapter(MainActivity.this,
+//                    MainActivity.this,  /* MessageLoadListener */
+//                    mLinearLayoutManager,
+//                    mMessageRecyclerView,
+//                    mImageClickListener);
+
+//            mMessageRecyclerView.setAdapter(mFirebaseAdapter);
         }
     };
 

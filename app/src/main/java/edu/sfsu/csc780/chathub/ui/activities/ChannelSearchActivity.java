@@ -44,6 +44,9 @@ public class ChannelSearchActivity extends AppCompatActivity {
             final TextView channelName = (TextView) view.findViewById(R.id.channelNameText);
             final SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(ChannelSearchActivity.this);
             //Joins the selected channel here
+            SharedPreferences.Editor edit = sp.edit();
+            edit.putString("currentChannel", channelName.getText().toString());
+            edit.apply();
 
             //Adds to user's channels list
             sFirebaseDatabaseReference.child(UserUtil.USER_CHILD).addValueEventListener(new ValueEventListener() {

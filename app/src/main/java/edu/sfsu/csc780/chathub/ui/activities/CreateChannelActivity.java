@@ -104,6 +104,7 @@ public class CreateChannelActivity extends AppCompatActivity {
 
     private void createChannel() {
         final SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(CreateChannelActivity.this);
+        SharedPreferences.Editor edit = sp.edit();
         final String channelName = mChannelEditText.getText().toString();
         String channelType = mChannelType.getText().toString();
         String purpose = null;
@@ -111,6 +112,9 @@ public class CreateChannelActivity extends AppCompatActivity {
         if(!mPurposeEditText.toString().equals("")) {
             purpose = mPurposeEditText.getText().toString();
         }
+
+        edit.putString("currentChannel", channelName);
+        edit.apply();
 
         //Adding channel to user's list of channel
         sFirebaseDatabaseReference.child(UserUtil.USER_CHILD).addValueEventListener(new ValueEventListener() {
