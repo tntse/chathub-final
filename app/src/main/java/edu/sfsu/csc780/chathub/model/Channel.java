@@ -8,23 +8,19 @@ import java.util.List;
  */
 
 public class Channel{
-    private String channelType;
     private HashMap<String, String> userList;
     private String channelName;
     private String channelTopic;
-    private boolean isPm;
 
     public Channel() {}
 
-    public Channel(HashMap<String, String> userList, String channelType, String channelName, boolean isPm) {
+    public Channel(HashMap<String, String> userList, String channelName) {
         this.userList = userList;
-        this.channelType = channelType;
         this.channelName = channelName;
-        this.isPm = isPm;
     }
 
-    public Channel(HashMap<String, String> userList, String channelName, String channelType, String channelTopic, boolean isPm) {
-        this(userList, channelType, channelName, isPm);
+    public Channel(HashMap<String, String> userList, String channelName, String channelTopic) {
+        this(userList, channelName);
         this.channelTopic = channelTopic;
     }
 
@@ -40,14 +36,6 @@ public class Channel{
         return userList;
     }
 
-    public String getChannelType() {
-        return channelType;
-    }
-
-    public void setChannelType(String channelType) {
-        this.channelType = channelType;
-    }
-
     public String getChannelName() {
         return channelName;
     }
@@ -56,11 +44,4 @@ public class Channel{
         this.channelName = channelName;
     }
 
-    public boolean isPm() {
-        return isPm;
-    }
-
-    public void setPm(boolean pm) {
-        isPm = pm;
-    }
 }

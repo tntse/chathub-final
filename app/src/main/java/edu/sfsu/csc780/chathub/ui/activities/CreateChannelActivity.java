@@ -129,10 +129,12 @@ public class CreateChannelActivity extends AppCompatActivity {
             public void onCancelled(DatabaseError databaseError) {}
         });
 
+        boolean isPublic = mTypeSwitch.isChecked();
+
         //user list for channel
         userList.put(mUser.getDisplayName(), mUser.getDisplayName());
-        Channel channel = new Channel(userList, channelName, channelType, purpose, true);
-        ChannelUtil.createChannel(channel);
+        Channel channel = new Channel(userList, channelName, purpose);
+        ChannelUtil.createChannel(channel, isPublic);
         Intent resultIntent = new Intent();
         setResult(Activity.RESULT_OK, resultIntent);
         finish();

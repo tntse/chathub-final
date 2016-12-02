@@ -220,11 +220,10 @@ public class SignInActivity extends AppCompatActivity implements
     private void checkIfChildChannelExists(DataSnapshot dataSnapshot, String channel) {
         boolean isChannelInFirebase = false;
         if(!dataSnapshot.getChildren().iterator().hasNext()) {
-            Log.d("Test", channel);
             createChannelIntoFirebase(channel);
         } else {
             //Goes through each of the channels in firebase
-            for (DataSnapshot children : dataSnapshot.getChildren()) {
+            for (DataSnapshot children : dataSnapshot.child("Public").getChildren()) {
                 //Goes deep into the channels json
                 //Basically chathub/channels/UNIQUE_KEY/channelName
                 if (children.getChildren().iterator().next().getValue().equals(channel)) {
@@ -234,7 +233,7 @@ public class SignInActivity extends AppCompatActivity implements
             if(!isChannelInFirebase) {
                 createChannelIntoFirebase(channel);
             } else {
-                ChannelUtil.addUserToChannelList(dataSnapshot.getChildren(), channel);
+                ChannelUtil.addUserToChannelList(dataSnapshot.child("Public").getChildren(), channel);
             }
         }
     }
@@ -243,8 +242,8 @@ public class SignInActivity extends AppCompatActivity implements
         HashMap<String, String> userList = new HashMap<>();
         //user list
         userList.put(mAuth.getCurrentUser().getDisplayName(), mAuth.getCurrentUser().getDisplayName());
-        Channel channel = new Channel(userList, channelName, "Public", "General Purpose", true);
-        ChannelUtil.createChannel(channel);
+        Channel channel = new Channel(userList, channelName, "General Purpose");
+        ChannelUtil.createChannel(channel, true);
     }
 
     private void putUserIntoFirebase() {

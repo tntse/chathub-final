@@ -227,8 +227,7 @@ public class MainActivity extends AppCompatActivity
                 ChatMessage chatMessage = new
                         ChatMessage(mMessageEditText.getText().toString(),
                         mUsername,
-                        mPhotoUrl,
-                        mCurrentChannel);
+                        mPhotoUrl);
                 MessageUtil.send(chatMessage, MainActivity.this);
                 mMessageEditText.setText("");
             }
