@@ -8,6 +8,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -81,6 +82,10 @@ public class ChannelSearchActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_channel_search);
+
+        Toolbar toolbar = (Toolbar) findViewById(R.id.channelSearchToolbar);
+
+        setSupportActionBar(toolbar);
 
         this.getSupportActionBar().setHomeAsUpIndicator(R.drawable.ic_close_black_24dp);
         this.getSupportActionBar().setDisplayHomeAsUpEnabled(true);
