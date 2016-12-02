@@ -43,8 +43,10 @@ public class MessageUtil {
     private static FirebaseAuth sFirebaseAuth;
     public interface MessageLoadListener { public void onLoadComplete(); }
 
-    public static void send(ChatMessage chatMessage) {
-        sFirebaseDatabaseReference.child(MESSAGES_CHILD).push().setValue(chatMessage);
+    public static void send(ChatMessage chatMessage, Activity activity) {
+        final SharedPreferences preferences =
+                PreferenceManager.getDefaultSharedPreferences(activity);
+        sFirebaseDatabaseReference.child(MESSAGES_CHILD).child(preferences.getString("currentChannel", "general")).push().setValue(chatMessage);
     }
 
     public static class MessageViewHolder extends RecyclerView.ViewHolder {
@@ -67,8 +69,6 @@ public class MessageUtil {
         }
     }
 
-    //TODO Cannot filter by channels, maybe change channel name to be the key to a list of messages
-    //belonging to the channel
     public static FirebaseRecyclerAdapter getFirebaseAdapter(final Activity activity,
                                                              MessageLoadListener listener,
                                                              final LinearLayoutManager linearManager,
@@ -84,16 +84,16 @@ public class MessageUtil {
                 ChatMessage.class,
                 R.layout.item_message,
                 MessageViewHolder.class,
-                sFirebaseDatabaseReference.child(MESSAGES_CHILD)) {
+                sFirebaseDatabaseReference.child(MESSAGES_CHILD).child(preferences.getString("currentChannel", "general"))) {
             @Override
             protected void populateViewHolder(final MessageViewHolder viewHolder,
                                               ChatMessage chatMessage, int position) {
                 sAdapterListener.onLoadComplete();
-                if(chatMessage.getChannelName().equals(preferences.getString("currentChannel", ""))) {
+//                if(chatMessage.getChannelName().equals(preferences.getString("currentChannel", ""))) {
                     setPhotoAndMessage(viewHolder, chatMessage, activity, preferences);
                     setImageMessage(chatMessage, viewHolder, activity);
                     setTimestamp(chatMessage, viewHolder, activity);
-                }
+//                }
             }
         };
 

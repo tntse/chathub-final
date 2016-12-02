@@ -81,6 +81,7 @@ import edu.sfsu.csc780.chathub.ui.utils.DesignUtils;
 import edu.sfsu.csc780.chathub.ui.utils.MapLoader;
 import edu.sfsu.csc780.chathub.ui.utils.LocationUtils;
 import edu.sfsu.csc780.chathub.ui.fragments.ImageDialogFragment;
+import edu.sfsu.csc780.chathub.ui.utils.UserUtil;
 
 public class MainActivity extends AppCompatActivity
         implements GoogleApiClient.OnConnectionFailedListener,
@@ -138,17 +139,21 @@ public class MainActivity extends AppCompatActivity
         public void onClick(View view) {
             //Change channel here
             TextView channel = (TextView) view.findViewById(R.id.channelNameText);
+            if(channel == null) {
+                channel = (TextView) view.findViewById(R.id.username);
+            }
             SharedPreferences.Editor edit = mSharedPreferences.edit();
             edit.putString("currentChannel", channel.getText().toString());
             edit.apply();
             mCurrentChannel = mSharedPreferences.getString("currentChannel", "general");
             Toast.makeText(MainActivity.this, channel.getText().toString(), Toast.LENGTH_SHORT).show();
-            mFirebaseAdapter.notifyDataSetChanged();
-//            mFirebaseAdapter = MessageUtil.getFirebaseAdapter(MainActivity.this,
-//                    MainActivity.this,  /* MessageLoadListener */
-//                    mLinearLayoutManager,
-//                    mMessageRecyclerView,
-//                    mImageClickListener);
+            mFirebaseAdapter = MessageUtil.getFirebaseAdapter(MainActivity.this,
+                    MainActivity.this,  /* MessageLoadListener */
+                    mLinearLayoutManager,
+                    mMessageRecyclerView,
+                    mImageClickListener);
+            mMessageRecyclerView.swapAdapter(mFirebaseAdapter, false);
+//            mFirebaseAdapter.cleanup();
 
 //            mMessageRecyclerView.setAdapter(mFirebaseAdapter);
         }
@@ -237,9 +242,8 @@ public class MainActivity extends AppCompatActivity
                 ChatMessage chatMessage = new
                         ChatMessage(mMessageEditText.getText().toString(),
                         mUsername,
-                        mPhotoUrl,
-                        mCurrentChannel);
-                MessageUtil.send(chatMessage);
+                        mPhotoUrl);
+                MessageUtil.send(chatMessage, MainActivity.this);
                 mMessageEditText.setText("");
             }
         });
@@ -282,6 +286,11 @@ public class MainActivity extends AppCompatActivity
         navRecyclerView.setLayoutManager(linearLayoutManager);
         //TODO When a new channel is created, it is not clickable until you exit the app
         navRecyclerView.setAdapter(ChannelUtil.getFirebaseAdapterForUserChannelList(this, mChannelClickListener));
+
+        RecyclerView userListRecyclerView = (RecyclerView) findViewById(R.id.userListRecyclerView);
+        LinearLayoutManager linearLayoutManager2 = new LinearLayoutManager(this);
+        userListRecyclerView.setLayoutManager(linearLayoutManager2);
+        userListRecyclerView.setAdapter(UserUtil.getFirebaseAdapterForUserList(mChannelClickListener));
     }
 
     private void dispatchTakePhotoIntent() {
@@ -443,7 +452,7 @@ public class MainActivity extends AppCompatActivity
                         ChatMessage(mMessageEditText.getText().toString(),
                         mUsername,
                         mPhotoUrl, imageReference.toString());
-                MessageUtil.send(chatMessage);
+                MessageUtil.send(chatMessage, MainActivity.this);
                 mMessageEditText.setText("");
             }
         });

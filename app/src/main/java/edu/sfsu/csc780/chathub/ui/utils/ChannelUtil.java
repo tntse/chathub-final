@@ -34,8 +34,12 @@ public class ChannelUtil {
             FirebaseDatabase.getInstance().getReference();
     private static FirebaseAuth sFirebaseAuth = FirebaseAuth.getInstance();
 
-    public static void createChannel(Channel channel) {
-        sFirebaseDatabaseReference.child(CHANNELS_CHILD).push().setValue(channel);
+    public static void createChannel(Channel channel, boolean isPublic) {
+        if(isPublic) {
+            sFirebaseDatabaseReference.child(CHANNELS_CHILD).child("Public").push().setValue(channel);
+        } else {
+            sFirebaseDatabaseReference.child(CHANNELS_CHILD).child("Private").push().setValue(channel);
+        }
     }
 
     public static class ChannelViewHolder extends RecyclerView.ViewHolder {
@@ -63,7 +67,7 @@ public class ChannelUtil {
                 Channel.class,
                 R.layout.item_channel,
                 ChannelViewHolder.class,
-                sFirebaseDatabaseReference.child(CHANNELS_CHILD)) {
+                sFirebaseDatabaseReference.child(CHANNELS_CHILD).child("Public")) {
             @Override
             protected void populateViewHolder(final ChannelViewHolder viewHolder,
                                               Channel channel, int position) {
@@ -106,8 +110,6 @@ public class ChannelUtil {
         for (DataSnapshot channel : channelList) {
             //Check if the channel name is the channel you want to update
             //Also, check if there isn't a user in the list already
-            Log.d("Test", Boolean.toString(channel.child("channelName").getValue().equals(channelName)
-                    && !channel.child("userList").getValue().toString().contains(sFirebaseAuth.getCurrentUser().getDisplayName())));
             if(channel.child("channelName").getValue().equals(channelName)
                     && !channel.child("userList").getValue().toString().contains(sFirebaseAuth.getCurrentUser().getDisplayName())) {
                 //Create the Map to store into firebase, the value is a String, but has to be an Object

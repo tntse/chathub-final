@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -58,12 +59,13 @@ public class UserUtil {
         final FirebaseRecyclerAdapter adapter = new FirebaseRecyclerAdapter<User,
                 UserViewHolder>(
                 User.class,
-                R.layout.item_channel,
+                R.layout.item_user,
                 UserViewHolder.class,
                 sFirebaseDatabaseReference.child(USER_CHILD)) {
             @Override
             protected void populateViewHolder(final UserViewHolder viewHolder,
                                               User user, int position) {
+                Log.d("Test2", user.getUsername().keySet().toString());
                 viewHolder.username.setText((String)user.getUsername().keySet().toArray()[0]);
             }
         };

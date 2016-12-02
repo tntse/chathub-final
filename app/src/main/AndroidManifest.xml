@@ -19,17 +19,22 @@
             android:name="com.google.android.geo.API_KEY"
             android:value="AIzaSyCrGjyA7H45nVyhKGdOe-RsPiNaofuE8rs" />
 
-        <activity android:name=".ui.activities.MainActivity">
+        <activity android:name=".ui.activities.MainActivity"
+            android:screenOrientation="portrait">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".ui.activities.SignInActivity" />
-        <activity android:name=".ui.activities.PreferencesActivity" />
-        <activity android:name=".ui.activities.ChannelSearchActivity" />
-        <activity android:name=".ui.activities.CreateChannelActivity"></activity>
+        <activity android:name=".ui.activities.SignInActivity"
+            android:screenOrientation="portrait"/>
+        <activity android:name=".ui.activities.PreferencesActivity"
+            android:screenOrientation="portrait"/>
+        <activity android:name=".ui.activities.ChannelSearchActivity"
+            android:screenOrientation="portrait"/>
+        <activity android:name=".ui.activities.CreateChannelActivity"
+            android:screenOrientation="portrait"/>
     </application>
 
 </manifest>
