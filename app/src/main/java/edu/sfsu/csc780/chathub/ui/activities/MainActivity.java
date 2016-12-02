@@ -133,6 +133,9 @@ public class MainActivity extends AppCompatActivity
         public void onClick(View view) {
             //Change channel here
             TextView channel = (TextView) view.findViewById(R.id.channelNameText);
+            if(channel == null) {
+                channel = (TextView) view.findViewById(R.id.username);
+            }
             SharedPreferences.Editor edit = mSharedPreferences.edit();
             edit.putString("currentChannel", channel.getText().toString());
             edit.apply();
