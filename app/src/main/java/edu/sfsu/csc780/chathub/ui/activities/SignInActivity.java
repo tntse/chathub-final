@@ -153,7 +153,7 @@ public class SignInActivity extends AppCompatActivity implements
                             Toast.makeText(SignInActivity.this, "Authentication failed.", Toast
                                     .LENGTH_SHORT).show();
                         } else {
-                            setUserAddEventListener(mAuth.getCurrentUser().getDisplayName());
+                            setUserAddEventListener(mAuth.getCurrentUser().getDisplayName().replace(".", ""));
                             setInitialChannelAddEventListener();
                         }
                     }

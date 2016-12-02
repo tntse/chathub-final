@@ -31,10 +31,13 @@ import android.support.design.widget.NavigationView;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.app.LoaderManager;
+import android.support.v4.content.ContextCompat;
 import android.support.v4.content.Loader;
+import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.Toolbar;
 import android.text.Editable;
 import android.text.InputFilter;
 import android.text.TextWatcher;
@@ -110,8 +113,11 @@ public class MainActivity extends AppCompatActivity
 
     private FirebaseRecyclerAdapter<ChatMessage, MessageUtil.MessageViewHolder>
             mFirebaseAdapter;
+
+    private Toolbar mToolBar;
     private ImageButton mImageButton;
     private ImageButton mPhotoButton;
+    private DrawerLayout mDrawerLayout;
     private int mSavedTheme;
     private String mCurrentChannel;
     private ImageButton mLocationButton;
@@ -185,6 +191,12 @@ public class MainActivity extends AppCompatActivity
         mLinearLayoutManager.setStackFromEnd(true);
         mMessageRecyclerView.setLayoutManager(mLinearLayoutManager);
         mChannelAdd = (RelativeLayout) findViewById(R.id.channelAdd);
+
+        mToolBar = (Toolbar) findViewById(R.id.toolbar);
+        setSupportActionBar(mToolBar);
+
+        mDrawerLayout = (DrawerLayout) findViewById(R.id.drawerLayout);
+        mDrawerLayout.setStatusBarBackgroundColor(ContextCompat.getColor(this, R.color.colorPrimary));
 
         mFirebaseAdapter = MessageUtil.getFirebaseAdapter(this,
                 this,  /* MessageLoadListener */

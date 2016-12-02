@@ -86,9 +86,9 @@ public class ChannelUtil {
                 R.layout.item_channel,
                 ChannelViewHolder.class,
                 sFirebaseDatabaseReference.child(USER_CHILD)
-                        .child(preferences.getString("username", ""))
+                        .child(preferences.getString("username", "").replace(".", ""))
                         .child("username")
-                        .child(preferences.getString("username", ""))) {
+                        .child(preferences.getString("username", "").replace(".", ""))) {
             @Override
             protected void populateViewHolder(final ChannelViewHolder viewHolder,
                                               String channel, int position) {
