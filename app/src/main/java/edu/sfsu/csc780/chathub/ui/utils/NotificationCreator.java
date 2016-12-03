@@ -6,6 +6,7 @@ import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Color;
 import android.support.v4.app.NotificationCompat;
 import android.support.v4.app.TaskStackBuilder;
 
@@ -21,7 +22,15 @@ public class NotificationCreator {
                 new NotificationCompat.Builder(activity)
                         .setSmallIcon(getNotificationIcon())
                         .setContentTitle("New message in #"+channelName)
+                        .setDefaults(Notification.DEFAULT_ALL)
                         .setContentText(message);
+
+        //Vibration
+        builder.setVibrate(new long[] { 1000, 1000, 1000, 1000, 1000 });
+        //LED
+        builder.setLights(Color.BLUE, 3000, 3000);
+        builder.setAutoCancel(true);
+
 
         Intent activityIntent = new Intent(activity, activity.getClass());
 
@@ -40,6 +49,7 @@ public class NotificationCreator {
         NotificationManager notificationManager =
                 (NotificationManager) activity.getSystemService(Context.NOTIFICATION_SERVICE);
         Notification notification = builder.build();
+        notification.defaults |= Notification.DEFAULT_VIBRATE;
 
         // mId allows you to update the notification later on.
         notificationManager.notify(1, notification);

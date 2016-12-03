@@ -28,6 +28,7 @@ import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 
 import java.util.Calendar;
+import java.util.Date;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 import edu.sfsu.csc780.chathub.model.ChatMessage;
@@ -89,11 +90,20 @@ public class MessageUtil {
             protected void populateViewHolder(final MessageViewHolder viewHolder,
                                               ChatMessage chatMessage, int position) {
                 sAdapterListener.onLoadComplete();
-//                if(chatMessage.getChannelName().equals(preferences.getString("currentChannel", ""))) {
-                    setPhotoAndMessage(viewHolder, chatMessage, activity, preferences);
-                    setImageMessage(chatMessage, viewHolder, activity);
-                    setTimestamp(chatMessage, viewHolder, activity);
-//                }
+                setPhotoAndMessage(viewHolder, chatMessage, activity, preferences);
+                setImageMessage(chatMessage, viewHolder, activity);
+                setTimestamp(chatMessage, viewHolder, activity);
+
+                long minTimestamp = chatMessage.getTimestamp() - 2000;
+                long maxTimestamp = chatMessage.getTimestamp() + 2000;
+
+                if(chatMessage.getText().contains("@"+preferences.getString("username", "anonymous"))
+                        && chatMessage.getTimestamp() >= minTimestamp
+                        && chatMessage.getTimestamp() <= maxTimestamp) {
+                    NotificationCreator.createNotification(activity,
+                            preferences.getString("currentChannel", "general"),
+                            chatMessage.getText());
+                }
             }
         };
 
