@@ -18,4 +18,5 @@
     <string name="users">Users</string>
     <string name="home">Home</string>
     <string name="channels">CHANNELS</string>
+    <string name="pound">#</string>
 </resources>

@@ -166,8 +166,7 @@ public class SignInActivity extends AppCompatActivity implements
             public void onDataChange(DataSnapshot dataSnapshot) {
                 SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(SignInActivity.this);
                 SharedPreferences.Editor edit = sp.edit();
-
-                addUserIfExists(edit, dataSnapshot, username);
+                addUserIfExists(edit, dataSnapshot, username.replace('.', ' ').replace('#', ' ').replace('$', ' ').replace('[', ' ').replace(']', ' '));
                 sFirebaseDatabaseReference.removeEventListener(this);
                 startActivity(new Intent(SignInActivity.this, MainActivity.class));
                 finish();
