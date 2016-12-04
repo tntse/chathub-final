@@ -15,6 +15,7 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.firebase.ui.database.FirebaseRecyclerAdapter;
 import com.google.firebase.database.DataSnapshot;
@@ -33,6 +34,7 @@ import edu.sfsu.csc780.chathub.ui.utils.UserUtil;
 
 public class ChannelSearchActivity extends AppCompatActivity {
 
+    private static final String TAG = ChannelSearchActivity.class.getSimpleName();
     private static final int REQUEST_NEW_CHANNEL = 20;
     private RecyclerView mMessageRecyclerView;
     private LinearLayoutManager mLinearLayoutManager;
@@ -44,13 +46,14 @@ public class ChannelSearchActivity extends AppCompatActivity {
     private View.OnClickListener channelJoinClickListener = new View.OnClickListener() {
         @Override
         public void onClick(final View view) {
-            final TextView channelName = (TextView) view.findViewById(R.id.channelName);
+            final TextView channelName = (TextView) view.findViewById(R.id.channelNameText);
             final SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(ChannelSearchActivity.this);
             //Joins the selected channel here
             SharedPreferences.Editor edit = sp.edit();
             edit.putString("currentChannel", channelName.getText().toString());
             edit.apply();
-
+            //Toast.makeText(ChannelSearchActivity.this, channelName.getText().toString(), Toast.LENGTH_LONG).show();
+            Log.e(TAG, channelName.getText().toString());
             //Adds to user's channels list
             sFirebaseDatabaseReference.child(UserUtil.USER_CHILD).addValueEventListener(new ValueEventListener() {
                 @Override
@@ -68,7 +71,7 @@ public class ChannelSearchActivity extends AppCompatActivity {
                 @Override
                 public void onDataChange(DataSnapshot dataSnapshot) {
                     sFirebaseDatabaseReference.removeEventListener(this);
-                    ChannelUtil.addUserToChannelList(dataSnapshot.getChildren(), channelName.getText().toString());
+                    ChannelUtil.addUserToChannelList(dataSnapshot.child("Public").getChildren(), channelName.getText().toString());
                 }
 
                 @Override

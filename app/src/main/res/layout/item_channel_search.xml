@@ -18,7 +18,7 @@
         android:textAlignment="center"/>
 
     <TextView
-        android:id="@+id/channelName"
+        android:id="@+id/channelNameText"
         android:layout_toRightOf="@id/hashtag"
         android:paddingLeft="16dp"
         android:layout_width="wrap_content"
