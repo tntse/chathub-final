@@ -23,6 +23,10 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+
 import edu.sfsu.csc780.chathub.R;
 import edu.sfsu.csc780.chathub.ui.fragments.FilesFragment;
 import edu.sfsu.csc780.chathub.ui.fragments.MessagesFragment;
@@ -115,16 +119,22 @@ public class MessageSearchActivity extends AppCompatActivity {
     }
 
     private void searchForMessages(final String query) {
+        final List<DataSnapshot> foundMessages = new ArrayList<>();
+        final HashMap<Integer, String> messagesChannelList = new HashMap<>();
+
         sFirebaseDatabaseReference.child(MessageUtil.MESSAGES_CHILD).addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 for(DataSnapshot channels : dataSnapshot.getChildren()) {
                     for(DataSnapshot message : channels.getChildren()) {
                         if(message.child("text").getValue().toString().contains(query)) {
-                            Log.d("search", "I did it");
+                            foundMessages.add(message);
+                            int index = foundMessages.size()-1;
+                            messagesChannelList.put(index, channels.getKey());
                         }
                     }
                 }
+                
             }
 
             @Override
