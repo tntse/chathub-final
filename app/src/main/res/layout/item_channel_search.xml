@@ -9,22 +9,22 @@
     >
 
     <TextView
-        android:id="@+id/icon"
+        android:id="@+id/hashtag"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="@string/pound"
         android:textAppearance="?attr/textAppearanceListItem"
-        android:textColor="#FFFFFF"
+        android:textColor="#000000"
         android:textAlignment="center"/>
 
     <TextView
-        android:id="@+id/channelNameText"
-        android:layout_toRightOf="@id/icon"
+        android:id="@+id/channelName"
+        android:layout_toRightOf="@id/hashtag"
         android:paddingLeft="16dp"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:textAppearance="?attr/textAppearanceListItem"
-        android:textColor="#FFFFFF"
+        android:textColor="#000000"
         android:textAlignment="center"
         />
 

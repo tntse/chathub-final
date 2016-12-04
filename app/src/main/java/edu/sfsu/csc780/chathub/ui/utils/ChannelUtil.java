@@ -45,14 +45,12 @@ public class ChannelUtil {
     public static class ChannelViewHolder extends RecyclerView.ViewHolder {
         public final View mView;
         public final TextView channelName;
-        public final ImageView icon;
         public static View.OnClickListener sChannelViewListener;
 
         public ChannelViewHolder(View view) {
             super(view);
             mView = view;
             channelName = (TextView) view.findViewById(R.id.channelNameText);
-            icon = (ImageView) view.findViewById(R.id.icon);
             mView.setOnClickListener(sChannelViewListener);
         }
     }
@@ -90,9 +88,9 @@ public class ChannelUtil {
                 R.layout.item_channel,
                 ChannelViewHolder.class,
                 sFirebaseDatabaseReference.child(USER_CHILD)
-                        .child(preferences.getString("username", "").replace(".", ""))
+                        .child(UserUtil.parseUsername(preferences.getString("username", "")))
                         .child("username")
-                        .child(preferences.getString("username", "").replace(".", ""))) {
+                        .child(UserUtil.parseUsername(preferences.getString("username", "")))) {
             @Override
             protected void populateViewHolder(final ChannelViewHolder viewHolder,
                                               String channel, int position) {

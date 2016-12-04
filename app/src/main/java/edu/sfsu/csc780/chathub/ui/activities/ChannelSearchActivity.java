@@ -38,11 +38,13 @@ public class ChannelSearchActivity extends AppCompatActivity {
     private LinearLayoutManager mLinearLayoutManager;
     private static DatabaseReference sFirebaseDatabaseReference =
             FirebaseDatabase.getInstance().getReference();
+
     private FirebaseRecyclerAdapter<Channel, ChannelUtil.ChannelViewHolder> mFirebaseAdapter;
+
     private View.OnClickListener channelJoinClickListener = new View.OnClickListener() {
         @Override
         public void onClick(final View view) {
-            final TextView channelName = (TextView) view.findViewById(R.id.channelNameText);
+            final TextView channelName = (TextView) view.findViewById(R.id.channelName);
             final SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(ChannelSearchActivity.this);
             //Joins the selected channel here
             SharedPreferences.Editor edit = sp.edit();

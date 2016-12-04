@@ -3,6 +3,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/activity_channel_search"
     android:layout_width="match_parent"
+    android:layout_marginTop="@dimen/activity_vertical_margin"
     android:layout_height="match_parent"
     tools:context="edu.sfsu.csc780.chathub.ui.activities.ChannelSearchActivity">
 
@@ -37,7 +38,7 @@
             android:layout_height="wrap_content"
             android:layout_marginLeft="16dp"
             android:layout_marginRight="16dp"
-            tools:listitem="@layout/item_channel" />
+            tools:listitem="@layout/item_channel_search" />
 
     </RelativeLayout>
 

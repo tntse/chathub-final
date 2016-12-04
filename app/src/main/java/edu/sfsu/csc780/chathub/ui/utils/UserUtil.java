@@ -35,7 +35,7 @@ public class UserUtil {
     public static void createUser(User user, Activity activity) {
         final SharedPreferences preferences =
                 PreferenceManager.getDefaultSharedPreferences(activity);
-        sFirebaseDatabaseReference.child(USER_CHILD).child(sFirebaseAuth.getCurrentUser().getDisplayName()).setValue(user);
+        sFirebaseDatabaseReference.child(USER_CHILD).child(parseUsername(sFirebaseAuth.getCurrentUser().getDisplayName())).setValue(user);
     }
 
     public static class UserViewHolder extends RecyclerView.ViewHolder {
@@ -85,5 +85,9 @@ public class UserUtil {
                 channelList.updateChildren(channel);
             }
         }
+    }
+
+    public static String parseUsername(String str){
+        return str.replace('.', ' ').replace('#', ' ').replace('$', ' ').replace('[', ' ').replace(']', ' ');
     }
 }
