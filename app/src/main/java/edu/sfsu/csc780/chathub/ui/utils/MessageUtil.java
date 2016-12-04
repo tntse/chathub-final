@@ -96,10 +96,11 @@ public class MessageUtil {
 
                 long minTimestamp = chatMessage.getTimestamp() - 2000;
                 long maxTimestamp = chatMessage.getTimestamp() + 2000;
+                long currentTimestamp = new Date().getTime();
 
                 if(chatMessage.getText().contains("@"+preferences.getString("username", "anonymous"))
-                        && chatMessage.getTimestamp() >= minTimestamp
-                        && chatMessage.getTimestamp() <= maxTimestamp) {
+                        && currentTimestamp >= minTimestamp
+                        && currentTimestamp <= maxTimestamp) {
                     NotificationCreator.createNotification(activity,
                             preferences.getString("currentChannel", "general"),
                             chatMessage.getText());

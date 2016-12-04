@@ -88,7 +88,7 @@ public class MainActivity extends AppCompatActivity
         MessageUtil.MessageLoadListener {
 
     private static final String TAG = "MainActivity";
-    private static final int REQUEST_INVITE = 1;
+    private static final int REQUEST_SEARCH = 1;
     private static final int REQUEST_TAKE_PHOTO = 3;
     public static final int REQUEST_PREFERENCES = 2;
     public static final int MSG_LENGTH_LIMIT = 64;
@@ -355,6 +355,11 @@ public class MainActivity extends AppCompatActivity
                 mSavedTheme = DesignUtils.getPreferredTheme(this);
                 Intent i = new Intent(this, PreferencesActivity.class);
                 startActivityForResult(i, REQUEST_PREFERENCES);
+                return true;
+            case R.id.search:
+                Intent intent = new Intent(this, MessageSearchActivity.class);
+                startActivity(intent);
+                return true;
             default:
                 return super.onOptionsItemSelected(item);
         }
