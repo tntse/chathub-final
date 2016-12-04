@@ -2,6 +2,7 @@ package edu.sfsu.csc780.chathub.ui.activities;
 
 import android.app.SearchManager;
 import android.graphics.Color;
+import android.net.Uri;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.view.MenuItemCompat;
 import android.support.v7.app.AppCompatActivity;
@@ -33,7 +34,9 @@ import edu.sfsu.csc780.chathub.ui.fragments.MessagesFragment;
 import edu.sfsu.csc780.chathub.ui.utils.FragmentTabHost;
 import edu.sfsu.csc780.chathub.ui.utils.MessageUtil;
 
-public class MessageSearchActivity extends AppCompatActivity {
+public class MessageSearchActivity extends AppCompatActivity
+        implements FilesFragment.OnFragmentInteractionListener,
+            MessagesFragment.OnFragmentInteractionListener {
 
     private static DatabaseReference sFirebaseDatabaseReference =
             FirebaseDatabase.getInstance().getReference();
@@ -116,6 +119,10 @@ public class MessageSearchActivity extends AppCompatActivity {
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         return super.onOptionsItemSelected(item);
+    }
+
+    public void onFragmentInteraction(Uri uri) {
+
     }
 
     private void searchForMessages(final String query) {

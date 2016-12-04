@@ -6,7 +6,6 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:paddingBottom="@dimen/activity_vertical_margin"
-    android:paddingTop="@dimen/activity_vertical_margin"
     tools:context="edu.sfsu.csc780.chathub.ui.activities.MessageSearchActivity">
 
     <android.support.v7.widget.Toolbar
@@ -14,6 +13,7 @@
         android:layout_height="wrap_content"
         android:background="?attr/colorPrimary"
         android:paddingEnd="10dp"
+        android:paddingTop="@dimen/activity_vertical_margin"
         android:id="@+id/searchBar"/>
 
     <edu.sfsu.csc780.chathub.ui.utils.FragmentTabHost
@@ -33,7 +33,8 @@
                 android:orientation="vertical"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:layout_marginTop="56dp">
+                android:layout_marginTop="56dp"
+            >
 
                 <FrameLayout
                     android:id="@+id/realtabcontent"

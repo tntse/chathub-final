@@ -26,6 +26,7 @@
         android:textAppearance="?attr/textAppearanceListItem"
         android:textColor="#000000"
         android:textAlignment="center"
+
         />
 
 </RelativeLayout>

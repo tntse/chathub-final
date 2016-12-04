@@ -134,7 +134,7 @@ public class CreateChannelActivity extends AppCompatActivity {
         boolean isPublic = mTypeSwitch.isChecked();
 
         //user list for channel
-        userList.put(mUser.getDisplayName(), mUser.getDisplayName());
+        userList.put(UserUtil.parseUsername(mUser.getDisplayName()), UserUtil.parseUsername(mUser.getDisplayName()));
         Channel channel = new Channel(userList, channelName, purpose);
         ChannelUtil.createChannel(channel, isPublic);
         Intent resultIntent = new Intent();

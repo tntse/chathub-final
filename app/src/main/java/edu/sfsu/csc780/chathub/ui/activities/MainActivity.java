@@ -164,6 +164,7 @@ public class MainActivity extends AppCompatActivity
         super.onCreate(savedInstanceState);
         DesignUtils.applyColorfulTheme(this);
         setContentView(R.layout.activity_main);
+        mProgressBar = (ProgressBar) findViewById(R.id.progressBar);
         mSharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
         // Set default username is anonymous.
         mUsername = ANONYMOUS;
@@ -190,7 +191,6 @@ public class MainActivity extends AppCompatActivity
 
         // Initialize ProgressBar and RecyclerView.
         mNavigationView = (NavigationView) findViewById(R.id.navigation);
-        mProgressBar = (ProgressBar) findViewById(R.id.progressBar);
         mMessageRecyclerView = (RecyclerView) findViewById(R.id.messageRecyclerView);
         mLinearLayoutManager = new LinearLayoutManager(this);
         mLinearLayoutManager.setStackFromEnd(true);
