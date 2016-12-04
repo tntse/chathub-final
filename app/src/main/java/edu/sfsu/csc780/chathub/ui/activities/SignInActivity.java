@@ -167,7 +167,7 @@ public class SignInActivity extends AppCompatActivity implements
     }
 
     private void setUserAddEventListener(final String username) {
-        sFirebaseDatabaseReference.child(UserUtil.USER_CHILD).addValueEventListener(new ValueEventListener() {
+        sFirebaseDatabaseReference.child(UserUtil.USER_CHILD).addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 Log.e(TAG, "setUserAddEventListener running.");
@@ -209,7 +209,7 @@ public class SignInActivity extends AppCompatActivity implements
 
     //TODO firebase keeps adding in channels and listening for events
     private void setInitialChannelAddEventListener() {
-        sFirebaseDatabaseReference.child(ChannelUtil.CHANNELS_CHILD).addValueEventListener(new ValueEventListener() {
+        sFirebaseDatabaseReference.child(ChannelUtil.CHANNELS_CHILD).addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 checkIfChildChannelExists(dataSnapshot, "general");

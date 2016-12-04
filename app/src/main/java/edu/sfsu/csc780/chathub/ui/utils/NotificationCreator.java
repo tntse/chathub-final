@@ -31,7 +31,6 @@ public class NotificationCreator {
         builder.setLights(Color.BLUE, 3000, 3000);
         builder.setAutoCancel(true);
 
-
         Intent activityIntent = new Intent(activity, activity.getClass());
 
         // The stack builder object will contain an artificial back stack for the
