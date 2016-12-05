@@ -88,13 +88,14 @@ public class MainActivity extends AppCompatActivity
         MessageUtil.MessageLoadListener {
 
     private static final String TAG = "MainActivity";
-    private static final int REQUEST_SEARCH = 1;
-    private static final int REQUEST_TAKE_PHOTO = 3;
+    private static final int REQUEST_PICK_IMAGE = 1;
     public static final int REQUEST_PREFERENCES = 2;
+    private static final int REQUEST_TAKE_PHOTO = 3;
+    private static final int REQUEST_NEW_CHANNEL = 4;
+    private static final int REQUEST_SEARCH = 5;
     public static final int MSG_LENGTH_LIMIT = 64;
     private static final double MAX_LINEAR_DIMENSION = 500.0;
     public static final String ANONYMOUS = "anonymous";
-    private static final int REQUEST_PICK_IMAGE = 1;
     private String mUsername;
     private String mPhotoUrl;
     private SharedPreferences mSharedPreferences;
@@ -149,14 +150,7 @@ public class MainActivity extends AppCompatActivity
             SharedPreferences.Editor edit = mSharedPreferences.edit();
             edit.putString("currentChannel", channelName);
             edit.apply();
-            mCurrentChannel = mSharedPreferences.getString("currentChannel", "general");
-            Toast.makeText(MainActivity.this, channelName, Toast.LENGTH_SHORT).show();
-            mFirebaseAdapter = MessageUtil.getFirebaseAdapter(MainActivity.this,
-                    MainActivity.this,  /* MessageLoadListener */
-                    mLinearLayoutManager,
-                    mMessageRecyclerView,
-                    mImageClickListener);
-            mMessageRecyclerView.swapAdapter(mFirebaseAdapter, false);
+            setChannelPage();
         }
     };
 
@@ -278,7 +272,7 @@ public class MainActivity extends AppCompatActivity
             @Override
             public void onClick(View view) {
                 Intent intent = new Intent(MainActivity.this, ChannelSearchActivity.class);
-                startActivity(intent);
+                startActivityForResult(intent, REQUEST_NEW_CHANNEL);
             }
         });
 
@@ -301,6 +295,16 @@ public class MainActivity extends AppCompatActivity
         if (takePictureIntent.resolveActivity(getPackageManager()) != null) {
             startActivityForResult(takePictureIntent, REQUEST_TAKE_PHOTO);
         }
+    }
+
+    private void setChannelPage() {
+        mCurrentChannel = mSharedPreferences.getString("currentChannel", "general");
+        mFirebaseAdapter = MessageUtil.getFirebaseAdapter(MainActivity.this,
+                MainActivity.this,  /* MessageLoadListener */
+                mLinearLayoutManager,
+                mMessageRecyclerView,
+                mImageClickListener);
+        mMessageRecyclerView.swapAdapter(mFirebaseAdapter, false);
     }
 
     @Override
@@ -433,6 +437,8 @@ public class MainActivity extends AppCompatActivity
                 DesignUtils.applyColorfulTheme(this);
                 this.recreate();
             }
+        } else if (requestCode == REQUEST_NEW_CHANNEL && resultCode == Activity.RESULT_OK) {
+            setChannelPage();
         }
     }
 

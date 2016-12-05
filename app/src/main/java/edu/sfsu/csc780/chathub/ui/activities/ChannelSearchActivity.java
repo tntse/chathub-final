@@ -79,6 +79,9 @@ public class ChannelSearchActivity extends AppCompatActivity {
             });
 
             //Change view to channel message view
+            Intent resultIntent = new Intent();
+            setResult(Activity.RESULT_OK, resultIntent);
+            finish();
         }
     };
 
@@ -129,7 +132,8 @@ public class ChannelSearchActivity extends AppCompatActivity {
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         if(requestCode == REQUEST_NEW_CHANNEL) {
             if(resultCode == Activity.RESULT_OK) {
-                //TODO: Main Activity has to change layout to show changed channel
+                Intent resultIntent = new Intent();
+                setResult(Activity.RESULT_OK, resultIntent);
                 finish();
             }
         }
