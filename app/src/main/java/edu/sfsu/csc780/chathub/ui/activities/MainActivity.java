@@ -46,6 +46,7 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
@@ -66,6 +67,15 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
+import com.sinch.android.rtc.ClientRegistration;
+import com.sinch.android.rtc.PushPair;
+import com.sinch.android.rtc.Sinch;
+import com.sinch.android.rtc.SinchClient;
+import com.sinch.android.rtc.SinchClientListener;
+import com.sinch.android.rtc.SinchError;
+import com.sinch.android.rtc.calling.Call;
+import com.sinch.android.rtc.calling.CallClient;
+import com.sinch.android.rtc.calling.CallListener;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -73,8 +83,10 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.List;
 
 import edu.sfsu.csc780.chathub.R;
+import edu.sfsu.csc780.chathub.model.APIKeys;
 import edu.sfsu.csc780.chathub.model.ChatMessage;
 import edu.sfsu.csc780.chathub.ui.utils.ChannelUtil;
 import edu.sfsu.csc780.chathub.ui.utils.MessageUtil;
@@ -117,6 +129,9 @@ public class MainActivity extends AppCompatActivity
 
     private FirebaseRecyclerAdapter<ChatMessage, MessageUtil.MessageViewHolder>
             mFirebaseAdapter;
+
+    private SinchClient mSinchClient;
+    private Call call;
 
     private Toolbar mToolBar;
     private ImageButton mImageButton;
@@ -178,6 +193,25 @@ public class MainActivity extends AppCompatActivity
                 mPhotoUrl = mUser.getPhotoUrl().toString();
             }
         }
+
+        mSinchClient = Sinch.getSinchClientBuilder().context(getApplicationContext())
+                .applicationKey(APIKeys.SINCH_API_KEY)
+                .applicationSecret(APIKeys.SINCH_APP_SECRET)
+                .environmentHost("sandbox.sinch.com")
+                .userId(mSharedPreferences.getString("username", "anonymous"))
+                .build();
+
+        mSinchClient.setSupportCalling(true);
+
+        mSinchClient.addSinchClientListener(new SinchClientListener() {
+            public void onClientStarted(SinchClient client) { }
+            public void onClientStopped(SinchClient client) { }
+            public void onClientFailed(SinchClient client, SinchError error) { }
+            public void onRegistrationCredentialsRequired(SinchClient client, ClientRegistration registrationCallback) { }
+            public void onLogMessage(int level, String area, String message) { }
+        });
+
+        mSinchClient.start();
 
         mCurrentChannel = mSharedPreferences.getString("currentChannel", "general");
 
@@ -297,6 +331,45 @@ public class MainActivity extends AppCompatActivity
         LinearLayoutManager linearLayoutManager2 = new LinearLayoutManager(this);
         userListRecyclerView.setLayoutManager(linearLayoutManager2);
         userListRecyclerView.setAdapter(UserUtil.getFirebaseAdapterForUserList(mChannelClickListener));
+
+        Button voiceCallButton = (Button) findViewById(R.id.voiceCall);
+        voiceCallButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                CallClient callClient = mSinchClient.getCallClient();
+                call = callClient.callConference("General");
+                call.addCallListener(new CallListener() {
+                    @Override
+                    public void onCallProgressing(Call call) {
+
+                    }
+
+                    @Override
+                    public void onCallEstablished(Call call) {
+
+                    }
+
+                    @Override
+                    public void onCallEnded(Call call) {
+
+                    }
+
+                    @Override
+                    public void onShouldSendPushNotification(Call call, List<PushPair> list) {
+
+                    }
+                });
+            }
+        });
+
+        Button endCallButton = (Button) findViewById(R.id.endCall);
+        endCallButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                call.hangup();
+                call = null;
+            }
+        });
     }
 
     private void dispatchTakePhotoIntent() {
@@ -330,6 +403,8 @@ public class MainActivity extends AppCompatActivity
     @Override
     public void onPause() {
         super.onPause();
+        mSinchClient.stopListeningOnActiveConnection();
+        mSinchClient.terminate();
     }
 
     @Override
