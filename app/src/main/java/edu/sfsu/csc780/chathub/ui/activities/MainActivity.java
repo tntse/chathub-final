@@ -51,6 +51,7 @@ import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
+import android.widget.SearchView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -274,6 +275,15 @@ public class MainActivity extends AppCompatActivity
             public void onClick(View view) {
                 Intent intent = new Intent(MainActivity.this, ChannelSearchActivity.class);
                 startActivityForResult(intent, REQUEST_NEW_CHANNEL);
+            }
+        });
+
+        SearchView jumpSearchView = (SearchView) findViewById(R.id.jumpSearch);
+        jumpSearchView.setIconified(false);
+        jumpSearchView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Toast.makeText(MainActivity.this, "Not implemented", Toast.LENGTH_SHORT).show();
             }
         });
 
