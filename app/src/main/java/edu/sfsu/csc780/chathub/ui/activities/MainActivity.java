@@ -139,23 +139,24 @@ public class MainActivity extends AppCompatActivity
         public void onClick(View view) {
             //Change channel here
             TextView channel = (TextView) view.findViewById(R.id.channelNameText);
+            String channelName = "";
             if(channel == null) {
                 channel = (TextView) view.findViewById(R.id.username);
+                channelName = channel.getText().toString()+"="+mSharedPreferences.getString("username", "anonymous");
+            } else {
+                channelName = channel.getText().toString();
             }
             SharedPreferences.Editor edit = mSharedPreferences.edit();
-            edit.putString("currentChannel", channel.getText().toString());
+            edit.putString("currentChannel", channelName);
             edit.apply();
             mCurrentChannel = mSharedPreferences.getString("currentChannel", "general");
-            Toast.makeText(MainActivity.this, channel.getText().toString(), Toast.LENGTH_SHORT).show();
+            Toast.makeText(MainActivity.this, channelName, Toast.LENGTH_SHORT).show();
             mFirebaseAdapter = MessageUtil.getFirebaseAdapter(MainActivity.this,
                     MainActivity.this,  /* MessageLoadListener */
                     mLinearLayoutManager,
                     mMessageRecyclerView,
                     mImageClickListener);
             mMessageRecyclerView.swapAdapter(mFirebaseAdapter, false);
-//            mFirebaseAdapter.cleanup();
-
-//            mMessageRecyclerView.setAdapter(mFirebaseAdapter);
         }
     };
 

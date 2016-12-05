@@ -47,7 +47,15 @@ public class MessageUtil {
     public static void send(ChatMessage chatMessage, Activity activity) {
         final SharedPreferences preferences =
                 PreferenceManager.getDefaultSharedPreferences(activity);
-        sFirebaseDatabaseReference.child(MESSAGES_CHILD).child(preferences.getString("currentChannel", "general")).push().setValue(chatMessage);
+        String channelName = preferences.getString("currentChannel", "general");
+        String[] parsedChannel = channelName.split("=");
+        if(parsedChannel.length == 1) {
+            sFirebaseDatabaseReference.child(MESSAGES_CHILD).child(channelName).push().setValue(chatMessage);
+        }
+        else {
+            sFirebaseDatabaseReference.child(MESSAGES_CHILD).child(parsedChannel[0]+"="+parsedChannel[1]).push().setValue(chatMessage);
+            sFirebaseDatabaseReference.child(MESSAGES_CHILD).child(parsedChannel[1]+"="+parsedChannel[0]).push().setValue(chatMessage);
+        }
     }
 
     public static class MessageViewHolder extends RecyclerView.ViewHolder {

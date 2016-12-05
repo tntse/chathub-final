@@ -55,7 +55,7 @@ public class ChannelSearchActivity extends AppCompatActivity {
             //Toast.makeText(ChannelSearchActivity.this, channelName.getText().toString(), Toast.LENGTH_LONG).show();
             Log.e(TAG, channelName.getText().toString());
             //Adds to user's channels list
-            sFirebaseDatabaseReference.child(UserUtil.USER_CHILD).addValueEventListener(new ValueEventListener() {
+            sFirebaseDatabaseReference.child(UserUtil.USER_CHILD).addListenerForSingleValueEvent(new ValueEventListener() {
                 @Override
                 public void onDataChange(DataSnapshot dataSnapshot) {
                     sFirebaseDatabaseReference.removeEventListener(this);
@@ -67,7 +67,7 @@ public class ChannelSearchActivity extends AppCompatActivity {
             });
 
             //Add to channel's user list
-            sFirebaseDatabaseReference.child(ChannelUtil.CHANNELS_CHILD).addValueEventListener(new ValueEventListener() {
+            sFirebaseDatabaseReference.child(ChannelUtil.CHANNELS_CHILD).addListenerForSingleValueEvent(new ValueEventListener() {
                 @Override
                 public void onDataChange(DataSnapshot dataSnapshot) {
                     sFirebaseDatabaseReference.removeEventListener(this);

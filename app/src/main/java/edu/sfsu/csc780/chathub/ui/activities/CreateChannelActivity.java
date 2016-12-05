@@ -119,11 +119,9 @@ public class CreateChannelActivity extends AppCompatActivity {
         edit.apply();
 
         //Adding channel to user's list of channel
-        sFirebaseDatabaseReference.child(UserUtil.USER_CHILD).addValueEventListener(new ValueEventListener() {
+        sFirebaseDatabaseReference.child(UserUtil.USER_CHILD).addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
-
-                sFirebaseDatabaseReference.removeEventListener(this);
                 UserUtil.addChannelToUserChannelList(dataSnapshot, sp, channelName);
             }
 
