@@ -51,8 +51,9 @@ public class MessageUtil {
         String[] parsedChannel = channelName.split("=");
         if(parsedChannel.length == 1) {
             sFirebaseDatabaseReference.child(MESSAGES_CHILD).child(channelName).push().setValue(chatMessage);
-        }
-        else {
+        } else if (parsedChannel[0].equals(parsedChannel[1])) {
+            sFirebaseDatabaseReference.child(MESSAGES_CHILD).child(channelName).push().setValue(chatMessage);
+        } else {
             sFirebaseDatabaseReference.child(MESSAGES_CHILD).child(parsedChannel[0]+"="+parsedChannel[1]).push().setValue(chatMessage);
             sFirebaseDatabaseReference.child(MESSAGES_CHILD).child(parsedChannel[1]+"="+parsedChannel[0]).push().setValue(chatMessage);
         }
