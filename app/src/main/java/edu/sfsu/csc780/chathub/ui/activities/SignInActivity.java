@@ -207,7 +207,6 @@ public class SignInActivity extends AppCompatActivity implements
         }
     }
 
-    //TODO firebase keeps adding in channels and listening for events
     private void setInitialChannelAddEventListener() {
         sFirebaseDatabaseReference.child(ChannelUtil.CHANNELS_CHILD).addListenerForSingleValueEvent(new ValueEventListener() {
             @Override

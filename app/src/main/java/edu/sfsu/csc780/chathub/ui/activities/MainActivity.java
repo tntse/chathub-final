@@ -103,6 +103,7 @@ public class MainActivity extends AppCompatActivity
 
     private FloatingActionButton mSendButton;
     private RecyclerView mMessageRecyclerView;
+    private RecyclerView mNavRecyclerView;
     private LinearLayoutManager mLinearLayoutManager;
     private ProgressBar mProgressBar;
     private EditText mMessageEditText;
@@ -276,11 +277,11 @@ public class MainActivity extends AppCompatActivity
             }
         });
 
-        RecyclerView navRecyclerView = (RecyclerView) findViewById(R.id.navRecyclerView);
+        mNavRecyclerView = (RecyclerView) findViewById(R.id.navRecyclerView);
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this);
-        navRecyclerView.setLayoutManager(linearLayoutManager);
+        mNavRecyclerView.setLayoutManager(linearLayoutManager);
         //TODO When a new channel is created, it is not clickable until you exit the app
-        navRecyclerView.setAdapter(ChannelUtil.getFirebaseAdapterForUserChannelList(this, mChannelClickListener));
+        mNavRecyclerView.setAdapter(ChannelUtil.getFirebaseAdapterForUserChannelList(this, mChannelClickListener));
 
         RecyclerView userListRecyclerView = (RecyclerView) findViewById(R.id.userListRecyclerView);
         LinearLayoutManager linearLayoutManager2 = new LinearLayoutManager(this);
@@ -305,6 +306,8 @@ public class MainActivity extends AppCompatActivity
                 mMessageRecyclerView,
                 mImageClickListener);
         mMessageRecyclerView.swapAdapter(mFirebaseAdapter, false);
+
+        mNavRecyclerView.swapAdapter(ChannelUtil.getFirebaseAdapterForUserChannelList(this, mChannelClickListener), false);
     }
 
     @Override
