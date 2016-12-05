@@ -67,12 +67,9 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
-import com.sinch.android.rtc.ClientRegistration;
 import com.sinch.android.rtc.PushPair;
 import com.sinch.android.rtc.Sinch;
 import com.sinch.android.rtc.SinchClient;
-import com.sinch.android.rtc.SinchClientListener;
-import com.sinch.android.rtc.SinchError;
 import com.sinch.android.rtc.calling.Call;
 import com.sinch.android.rtc.calling.CallClient;
 import com.sinch.android.rtc.calling.CallListener;
@@ -88,6 +85,7 @@ import java.util.List;
 import edu.sfsu.csc780.chathub.R;
 import edu.sfsu.csc780.chathub.model.APIKeys;
 import edu.sfsu.csc780.chathub.model.ChatMessage;
+import edu.sfsu.csc780.chathub.model.ChathubSinchClientListener;
 import edu.sfsu.csc780.chathub.ui.utils.ChannelUtil;
 import edu.sfsu.csc780.chathub.ui.utils.MessageUtil;
 import edu.sfsu.csc780.chathub.ui.utils.DesignUtils;
@@ -200,17 +198,8 @@ public class MainActivity extends AppCompatActivity
                 .environmentHost("sandbox.sinch.com")
                 .userId(mSharedPreferences.getString("username", "anonymous"))
                 .build();
-
         mSinchClient.setSupportCalling(true);
-
-        mSinchClient.addSinchClientListener(new SinchClientListener() {
-            public void onClientStarted(SinchClient client) { }
-            public void onClientStopped(SinchClient client) { }
-            public void onClientFailed(SinchClient client, SinchError error) { }
-            public void onRegistrationCredentialsRequired(SinchClient client, ClientRegistration registrationCallback) { }
-            public void onLogMessage(int level, String area, String message) { }
-        });
-
+        mSinchClient.addSinchClientListener(new ChathubSinchClientListener());
         mSinchClient.start();
 
         mCurrentChannel = mSharedPreferences.getString("currentChannel", "general");
