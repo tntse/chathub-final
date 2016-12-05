@@ -28,6 +28,7 @@ import android.provider.MediaStore;
 import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.NavigationView;
+import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.app.LoaderManager;
@@ -86,6 +87,7 @@ import edu.sfsu.csc780.chathub.R;
 import edu.sfsu.csc780.chathub.model.APIKeys;
 import edu.sfsu.csc780.chathub.model.ChatMessage;
 import edu.sfsu.csc780.chathub.model.ChathubSinchClientListener;
+import edu.sfsu.csc780.chathub.ui.utils.AudioUtil;
 import edu.sfsu.csc780.chathub.ui.utils.ChannelUtil;
 import edu.sfsu.csc780.chathub.ui.utils.MessageUtil;
 import edu.sfsu.csc780.chathub.ui.utils.DesignUtils;
@@ -130,6 +132,7 @@ public class MainActivity extends AppCompatActivity
 
     private SinchClient mSinchClient;
     private Call call;
+    private boolean canCall = true;
 
     private Toolbar mToolBar;
     private ImageButton mImageButton;
@@ -192,6 +195,8 @@ public class MainActivity extends AppCompatActivity
             }
         }
 
+        AudioUtil.startAudioListener(this);
+
         mSinchClient = Sinch.getSinchClientBuilder().context(getApplicationContext())
                 .applicationKey(APIKeys.SINCH_API_KEY)
                 .applicationSecret(APIKeys.SINCH_APP_SECRET)
@@ -199,8 +204,6 @@ public class MainActivity extends AppCompatActivity
                 .userId(mSharedPreferences.getString("username", "anonymous"))
                 .build();
         mSinchClient.setSupportCalling(true);
-        mSinchClient.addSinchClientListener(new ChathubSinchClientListener());
-        mSinchClient.start();
 
         mCurrentChannel = mSharedPreferences.getString("currentChannel", "general");
 
@@ -325,28 +328,30 @@ public class MainActivity extends AppCompatActivity
             @Override
             public void onClick(View view) {
                 CallClient callClient = mSinchClient.getCallClient();
-                call = callClient.callConference("General");
-                call.addCallListener(new CallListener() {
-                    @Override
-                    public void onCallProgressing(Call call) {
+                if(canCall) {
+                    call = callClient.callConference("General");
+                    call.addCallListener(new CallListener() {
+                        @Override
+                        public void onCallProgressing(Call call) {
+                            Log.d("Call", "Call progressing");
+                        }
 
-                    }
+                        @Override
+                        public void onCallEstablished(Call call) {
+                            Log.d("Call", "Calling now");
+                        }
 
-                    @Override
-                    public void onCallEstablished(Call call) {
+                        @Override
+                        public void onCallEnded(Call call) {
+                            Log.d("Call", "Stopped calling");
+                        }
 
-                    }
-
-                    @Override
-                    public void onCallEnded(Call call) {
-
-                    }
-
-                    @Override
-                    public void onShouldSendPushNotification(Call call, List<PushPair> list) {
-
-                    }
-                });
+                        @Override
+                        public void onShouldSendPushNotification(Call call, List<PushPair> list) {
+                            Log.d("Call", "Push");
+                        }
+                    });
+                }
             }
         });
 
@@ -354,8 +359,10 @@ public class MainActivity extends AppCompatActivity
         endCallButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                call.hangup();
-                call = null;
+                if(call != null) {
+                    call.hangup();
+                    call = null;
+                }
             }
         });
     }
@@ -398,6 +405,8 @@ public class MainActivity extends AppCompatActivity
     @Override
     public void onResume() {
         super.onResume();
+        mSinchClient.addSinchClientListener(new ChathubSinchClientListener());
+        mSinchClient.start();
         LocationUtils.startLocationUpdates(this);
     }
 
@@ -408,6 +417,8 @@ public class MainActivity extends AppCompatActivity
                 && grantResults[0] == PackageManager.PERMISSION_GRANTED);
         if (isGranted && requestCode == LocationUtils.REQUEST_CODE) {
             LocationUtils.startLocationUpdates(this);
+        } else if(!isGranted || requestCode != AudioUtil.REQUEST_CODE) {
+            canCall = false;
         }
     }
 
