@@ -3,6 +3,7 @@ package edu.sfsu.csc780.chathub.ui.activities;
 import android.app.Activity;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.Color;
 import android.preference.PreferenceManager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -54,6 +55,7 @@ public class CreateChannelActivity extends AppCompatActivity {
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setTitle("Create channel");
+        toolbar.setTitleTextColor(Color.WHITE);
 
         mChannelDescription = (TextView)findViewById(R.id.channel_description);
         mChannelType = (TextView)findViewById(R.id.channel_type);

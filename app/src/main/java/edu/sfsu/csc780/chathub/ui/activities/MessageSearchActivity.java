@@ -54,6 +54,7 @@ public class MessageSearchActivity extends AppCompatActivity
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.searchBar);
         setSupportActionBar(toolbar);
+        toolbar.setTitleTextColor(Color.WHITE);
 
         fragmentManager = getFragmentManager();
 
@@ -88,9 +89,10 @@ public class MessageSearchActivity extends AppCompatActivity
         SearchManager searchManager = (SearchManager) getSystemService(SEARCH_SERVICE);
         searchView.setSearchableInfo(searchManager.getSearchableInfo(getComponentName()));
 
-        EditText textView = (EditText) searchView.findViewById(android.support.v7.appcompat.R.id.search_src_text);
+        TextView textView = (TextView) searchView.findViewById(android.support.v7.appcompat.R.id.search_src_text);
         textView.setTextColor(Color.BLACK);
-        textView.setHintTextColor(Color.BLACK);
+        textView.setHint("Search");
+        textView.setHintTextColor(Color.GRAY);
 
 //        searchView.setIconified(false);
         myActionMenuItem.expandActionView();

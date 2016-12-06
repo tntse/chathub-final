@@ -3,6 +3,7 @@ package edu.sfsu.csc780.chathub.ui.activities;
 import android.app.Activity;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.Color;
 import android.preference.PreferenceManager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -89,8 +90,8 @@ public class ChannelSearchActivity extends AppCompatActivity {
         setContentView(R.layout.activity_channel_search);
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.channelSearchToolbar);
-
         setSupportActionBar(toolbar);
+        toolbar.setTitleTextColor(Color.WHITE);
 
         this.getSupportActionBar().setHomeAsUpIndicator(R.drawable.ic_close_black_24dp);
         this.getSupportActionBar().setDisplayHomeAsUpEnabled(true);
