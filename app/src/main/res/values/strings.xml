@@ -1,10 +1,30 @@
 <resources>
-    <string name="app_name">ChatHub</string>
+    <string name="app_name">SlackHub</string>
     <string name="welcome_msg">Welcome!</string>
     <string name="sign_out">Sign Out</string>
     <string name="contacts_permission_rationale">Access to account information is required to sign in.</string>
     <string name="sign_in">Sign In</string>
+    <string name="create">CREATE</string>
     <string name="preferences_menu_label">Preferences</string>
     <string name="auto_palette_preference">autoPalette</string>
     <string name="color_scheme_preference">colorScheme</string>
+    <string name="title_activity_create_channel">Create Channel</string>
+    <string name="public_channel">Public</string>
+    <string name="private_channel">Private</string>
+    <string name="public_description">Anyone on your team can join</string>
+    <string name="private_description">Private channels are invite-only, and do not show up in the channel browser list</string>
+    <string name="channel_name_description">Names must be 21 characters or less, lower case and cannot contain spaces or periods</string>
+    <string name="channel_purpose">Optional. Give your channel a purpose that describes what it will be used for</string>
+    <string name="users">Users</string>
+    <string name="home">Home</string>
+    <string name="channels">CHANNELS</string>
+    <string name="pound">#</string>
+    <string name="enter_message">Enter Message Here</string>
+    <string name="callinprogress">Call In Progress</string>
+    <string name="callended">Call Ended</string>
+    <string name="at_sign">\@</string>
+
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+
 </resources>
