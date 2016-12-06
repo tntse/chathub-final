@@ -151,8 +151,8 @@ public class MessageSearchActivity extends AppCompatActivity
                                 ChatMessage currMessage = new ChatMessage(
                                         message.child("text").getValue().toString(),    // text
                                         message.child("name").getValue().toString(),    // username
-                                        message.child("photoUrl").getValue().toString(),// user photo
-                                        ChannelUtil.getChannelDisplayName(channels.getValue().toString(), MessageSearchActivity.this)                            // channel
+                                        message.child("photoUrl").getValue().toString(), // user photo
+                                        ChannelUtil.getChannelDisplayName(channels.getKey(), MessageSearchActivity.this)  // channel
                                 );
 
                                 currMessage.setTimestamp((Long) message.child("timestamp").getValue()); //timestamp
