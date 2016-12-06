@@ -318,7 +318,8 @@ public class MainActivity extends AppCompatActivity
         mNavRecyclerView = (RecyclerView) findViewById(R.id.navRecyclerView);
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this);
         mNavRecyclerView.setLayoutManager(linearLayoutManager);
-        mNavRecyclerView.setAdapter(ChannelUtil.getFirebaseAdapterForUserChannelList(this, mChannelClickListener));
+        mNavRecyclerView.setAdapter(ChannelUtil.getFirebaseAdapterForUserChannelList(mChannelClickListener,
+                mAuth.getCurrentUser().getDisplayName()));
 
         RecyclerView userListRecyclerView = (RecyclerView) findViewById(R.id.userListRecyclerView);
         LinearLayoutManager linearLayoutManager2 = new LinearLayoutManager(this);
@@ -392,7 +393,8 @@ public class MainActivity extends AppCompatActivity
                 mImageClickListener);
         mMessageRecyclerView.swapAdapter(mFirebaseAdapter, false);
 
-        mNavRecyclerView.swapAdapter(ChannelUtil.getFirebaseAdapterForUserChannelList(this, mChannelClickListener), false);
+        mNavRecyclerView.swapAdapter(ChannelUtil.getFirebaseAdapterForUserChannelList(mChannelClickListener,
+                mSharedPreferences.getString("username", "anonymous")), false);
     }
 
     @Override
