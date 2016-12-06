@@ -8,7 +8,6 @@
         <item name="android:textColorPrimary">@android:color/white</item>
         <item name="android:textColorSecondary">@android:color/white</item>
         <item name="actionMenuTextColor">@android:color/white</item>
-        
 
         <!-- Customize your theme here. -->
         <item name="colorPrimary">@color/colorPrimary</item>
@@ -20,7 +19,4 @@
         <item name="android:buttonStyle">@style/ChatHubButtonStyle</item>
     </style>
 
-    <style name="ToolBarStyle" parent="Theme.AppCompat">
-
-    </style>
 </resources>

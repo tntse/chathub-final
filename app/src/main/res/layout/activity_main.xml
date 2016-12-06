@@ -72,6 +72,7 @@
                     android:inputType="textMultiLine"
                     android:hint="@string/enter_message"
                     android:paddingTop="20dp"/>
+
                 <LinearLayout
                     android:orientation="horizontal"
                     android:layout_width="match_parent"
@@ -80,7 +81,8 @@
                     <View
                         android:layout_width="0dp"
                         android:layout_height="0dp"
-                        android:layout_weight="1"/>
+                        android:layout_weight="1"
+                        />
 
                     <ImageButton
                         android:id="@+id/cameraButton"
