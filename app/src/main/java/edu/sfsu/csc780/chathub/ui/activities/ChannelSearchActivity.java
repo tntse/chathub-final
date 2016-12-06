@@ -8,12 +8,14 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.firebase.ui.database.FirebaseRecyclerAdapter;
 import com.google.firebase.database.DataSnapshot;
@@ -32,12 +34,15 @@ import edu.sfsu.csc780.chathub.ui.utils.UserUtil;
 
 public class ChannelSearchActivity extends AppCompatActivity {
 
+    private static final String TAG = ChannelSearchActivity.class.getSimpleName();
     private static final int REQUEST_NEW_CHANNEL = 20;
     private RecyclerView mMessageRecyclerView;
     private LinearLayoutManager mLinearLayoutManager;
     private static DatabaseReference sFirebaseDatabaseReference =
             FirebaseDatabase.getInstance().getReference();
+
     private FirebaseRecyclerAdapter<Channel, ChannelUtil.ChannelViewHolder> mFirebaseAdapter;
+
     private View.OnClickListener channelJoinClickListener = new View.OnClickListener() {
         @Override
         public void onClick(final View view) {
@@ -47,9 +52,10 @@ public class ChannelSearchActivity extends AppCompatActivity {
             SharedPreferences.Editor edit = sp.edit();
             edit.putString("currentChannel", channelName.getText().toString());
             edit.apply();
-
+            //Toast.makeText(ChannelSearchActivity.this, channelName.getText().toString(), Toast.LENGTH_LONG).show();
+            Log.e(TAG, channelName.getText().toString());
             //Adds to user's channels list
-            sFirebaseDatabaseReference.child(UserUtil.USER_CHILD).addValueEventListener(new ValueEventListener() {
+            sFirebaseDatabaseReference.child(UserUtil.USER_CHILD).addListenerForSingleValueEvent(new ValueEventListener() {
                 @Override
                 public void onDataChange(DataSnapshot dataSnapshot) {
                     sFirebaseDatabaseReference.removeEventListener(this);
@@ -61,11 +67,11 @@ public class ChannelSearchActivity extends AppCompatActivity {
             });
 
             //Add to channel's user list
-            sFirebaseDatabaseReference.child(ChannelUtil.CHANNELS_CHILD).addValueEventListener(new ValueEventListener() {
+            sFirebaseDatabaseReference.child(ChannelUtil.CHANNELS_CHILD).addListenerForSingleValueEvent(new ValueEventListener() {
                 @Override
                 public void onDataChange(DataSnapshot dataSnapshot) {
                     sFirebaseDatabaseReference.removeEventListener(this);
-                    ChannelUtil.addUserToChannelList(dataSnapshot.getChildren(), channelName.getText().toString());
+                    ChannelUtil.addUserToChannelList(dataSnapshot.child("Public").getChildren(), channelName.getText().toString());
                 }
 
                 @Override
@@ -73,6 +79,9 @@ public class ChannelSearchActivity extends AppCompatActivity {
             });
 
             //Change view to channel message view
+            Intent resultIntent = new Intent();
+            setResult(Activity.RESULT_OK, resultIntent);
+            finish();
         }
     };
 
@@ -81,6 +90,10 @@ public class ChannelSearchActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_channel_search);
+
+        Toolbar toolbar = (Toolbar) findViewById(R.id.channelSearchToolbar);
+
+        setSupportActionBar(toolbar);
 
         this.getSupportActionBar().setHomeAsUpIndicator(R.drawable.ic_close_black_24dp);
         this.getSupportActionBar().setDisplayHomeAsUpEnabled(true);
@@ -119,7 +132,8 @@ public class ChannelSearchActivity extends AppCompatActivity {
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         if(requestCode == REQUEST_NEW_CHANNEL) {
             if(resultCode == Activity.RESULT_OK) {
-                //TODO: Main Activity has to change layout to show changed channel
+                Intent resultIntent = new Intent();
+                setResult(Activity.RESULT_OK, resultIntent);
                 finish();
             }
         }

@@ -28,6 +28,7 @@ import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 
 import java.util.Calendar;
+import java.util.Date;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 import edu.sfsu.csc780.chathub.model.ChatMessage;
@@ -46,7 +47,16 @@ public class MessageUtil {
     public static void send(ChatMessage chatMessage, Activity activity) {
         final SharedPreferences preferences =
                 PreferenceManager.getDefaultSharedPreferences(activity);
-        sFirebaseDatabaseReference.child(MESSAGES_CHILD).child(preferences.getString("currentChannel", "general")).push().setValue(chatMessage);
+        String channelName = preferences.getString("currentChannel", "general");
+        String[] parsedChannel = channelName.split("=");
+        if(parsedChannel.length == 1) {
+            sFirebaseDatabaseReference.child(MESSAGES_CHILD).child(channelName).push().setValue(chatMessage);
+        } else if (parsedChannel[0].equals(parsedChannel[1])) {
+            sFirebaseDatabaseReference.child(MESSAGES_CHILD).child(channelName).push().setValue(chatMessage);
+        } else {
+            sFirebaseDatabaseReference.child(MESSAGES_CHILD).child(parsedChannel[0]+"="+parsedChannel[1]).push().setValue(chatMessage);
+            sFirebaseDatabaseReference.child(MESSAGES_CHILD).child(parsedChannel[1]+"="+parsedChannel[0]).push().setValue(chatMessage);
+        }
     }
 
     public static class MessageViewHolder extends RecyclerView.ViewHolder {
@@ -89,11 +99,21 @@ public class MessageUtil {
             protected void populateViewHolder(final MessageViewHolder viewHolder,
                                               ChatMessage chatMessage, int position) {
                 sAdapterListener.onLoadComplete();
-//                if(chatMessage.getChannelName().equals(preferences.getString("currentChannel", ""))) {
-                    setPhotoAndMessage(viewHolder, chatMessage, activity, preferences);
-                    setImageMessage(chatMessage, viewHolder, activity);
-                    setTimestamp(chatMessage, viewHolder, activity);
-//                }
+                setPhotoAndMessage(viewHolder, chatMessage, activity, preferences);
+                setImageMessage(chatMessage, viewHolder, activity);
+                setTimestamp(chatMessage, viewHolder, activity);
+
+                long minTimestamp = chatMessage.getTimestamp() - 2000;
+                long maxTimestamp = chatMessage.getTimestamp() + 2000;
+                long currentTimestamp = new Date().getTime();
+
+                if(chatMessage.getText().contains("@"+preferences.getString("username", "anonymous"))
+                        && currentTimestamp >= minTimestamp
+                        && currentTimestamp <= maxTimestamp) {
+                    NotificationCreator.createNotification(activity,
+                            preferences.getString("currentChannel", "general"),
+                            chatMessage.getText());
+                }
             }
         };
 

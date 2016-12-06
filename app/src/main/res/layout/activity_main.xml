@@ -6,11 +6,13 @@
     android:fitsSystemWindows="true"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:paddingTop="@dimen/activity_vertical_margin"
     tools:context=".ui.activities.MainActivity">
 
     <RelativeLayout
         android:layout_width="fill_parent"
         android:layout_height="fill_parent">
+
         <android.support.v7.widget.Toolbar
             android:id="@+id/toolbar"
             android:layout_height="wrap_content"
@@ -110,6 +112,7 @@
         android:id="@+id/navigation"
         android:layout_width="wrap_content"
         android:layout_height="fill_parent"
+        android:paddingTop="@dimen/activity_vertical_margin"
         android:layout_gravity="start"
         android:background="@color/colorPrimary">
 
@@ -122,9 +125,29 @@
 
             <android.support.v7.widget.RecyclerView
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
+                android:layout_height="370dp"
                 android:id="@+id/navRecyclerView"
                 android:layout_below="@+id/channelHeader"/>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="50dp"
+                android:orientation="horizontal"
+                android:layout_below="@+id/navRecyclerView">
+
+                <Button
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/voiceCall"
+                    android:text="Start Call"/>
+
+                <Button
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/endCall"
+                    android:text="End Call"/>
+
+            </LinearLayout>
 
         </RelativeLayout>
 
@@ -135,15 +158,20 @@
         android:layout_width="wrap_content"
         android:layout_height="fill_parent"
         android:layout_gravity="end"
+        android:paddingTop="@dimen/activity_vertical_margin"
         android:background="@color/colorPrimary">
 
         <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent">
 
+            <include layout="@layout/userlist_header"
+                android:id="@+id/userHeader" />
+
             <android.support.v7.widget.RecyclerView
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
+                android:layout_below="@id/userHeader"
                 android:id="@+id/userListRecyclerView" />
 
         </RelativeLayout>

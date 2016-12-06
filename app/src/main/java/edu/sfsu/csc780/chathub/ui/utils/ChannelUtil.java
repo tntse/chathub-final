@@ -45,14 +45,12 @@ public class ChannelUtil {
     public static class ChannelViewHolder extends RecyclerView.ViewHolder {
         public final View mView;
         public final TextView channelName;
-        public final ImageView icon;
         public static View.OnClickListener sChannelViewListener;
 
         public ChannelViewHolder(View view) {
             super(view);
             mView = view;
             channelName = (TextView) view.findViewById(R.id.channelNameText);
-            icon = (ImageView) view.findViewById(R.id.icon);
             mView.setOnClickListener(sChannelViewListener);
         }
     }
@@ -65,7 +63,7 @@ public class ChannelUtil {
         final FirebaseRecyclerAdapter adapter = new FirebaseRecyclerAdapter<Channel,
                 ChannelViewHolder>(
                 Channel.class,
-                R.layout.item_channel,
+                R.layout.item_channel_search,
                 ChannelViewHolder.class,
                 sFirebaseDatabaseReference.child(CHANNELS_CHILD).child("Public")) {
             @Override
@@ -90,9 +88,9 @@ public class ChannelUtil {
                 R.layout.item_channel,
                 ChannelViewHolder.class,
                 sFirebaseDatabaseReference.child(USER_CHILD)
-                        .child(preferences.getString("username", "").replace(".", ""))
+                        .child(UserUtil.parseUsername(preferences.getString("username", "")))
                         .child("username")
-                        .child(preferences.getString("username", "").replace(".", ""))) {
+                        .child(UserUtil.parseUsername(preferences.getString("username", "")))) {
             @Override
             protected void populateViewHolder(final ChannelViewHolder viewHolder,
                                               String channel, int position) {
@@ -103,7 +101,6 @@ public class ChannelUtil {
         return adapter;
     }
 
-    //TODO: For some reason, it adds Random channel twice?
     public static void addUserToChannelList(Iterable<DataSnapshot> channelList, String channelName) {
         //This method is for adding a user to random's or general's userlist
         //Iterate through the list of channels
@@ -111,11 +108,13 @@ public class ChannelUtil {
             //Check if the channel name is the channel you want to update
             //Also, check if there isn't a user in the list already
             if(channel.child("channelName").getValue().equals(channelName)
-                    && !channel.child("userList").getValue().toString().contains(sFirebaseAuth.getCurrentUser().getDisplayName())) {
+                    && !channel.child("userList").getValue().toString().contains(
+                        UserUtil.parseUsername(sFirebaseAuth.getCurrentUser().getDisplayName()))) {
                 //Create the Map to store into firebase, the value is a String, but has to be an Object
                 //because updateChildren requires it
                 Map<String, Object> user = new HashMap<>();
-                user.put(sFirebaseAuth.getCurrentUser().getDisplayName(), sFirebaseAuth.getCurrentUser().getDisplayName());
+                user.put(UserUtil.parseUsername(sFirebaseAuth.getCurrentUser().getDisplayName()),
+                        UserUtil.parseUsername(sFirebaseAuth.getCurrentUser().getDisplayName()));
                 //navigate to chathub/channels/{UNIQUE_KEY}/userlist
                 DatabaseReference childReference = channel.child("userList").getRef();
                 //updateChildren does not overwrite

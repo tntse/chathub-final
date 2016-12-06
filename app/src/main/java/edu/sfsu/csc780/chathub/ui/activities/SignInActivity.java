@@ -86,6 +86,8 @@ public class SignInActivity extends AppCompatActivity implements
                 .requestIdToken(getString(R.string.default_web_client_id))
                 .requestEmail()
                 .build();
+
+        // Log.e(TAG, gso.toString());
         mGoogleApiClient = new GoogleApiClient.Builder(this)
                 .enableAutoManage(this /* FragmentActivity */, this /* OnConnectionFailedListener */)
                 .addApi(Auth.GOOGLE_SIGN_IN_API, gso)
@@ -126,6 +128,7 @@ public class SignInActivity extends AppCompatActivity implements
         // Handle the result of the sign-in activity
         if (requestCode == RC_SIGN_IN) {
             GoogleSignInResult result = Auth.GoogleSignInApi.getSignInResultFromIntent(data);
+            Log.e(TAG, "data:" + data.getExtras().toString());
             if (result.isSuccess()) {
                 // successful, now authenticate with Firebase
                 GoogleSignInAccount account = result.getSignInAccount();
@@ -139,6 +142,7 @@ public class SignInActivity extends AppCompatActivity implements
 
     private void firebaseAuthWithGoogle(GoogleSignInAccount acct) {
         AuthCredential credential = GoogleAuthProvider.getCredential(acct.getIdToken(), null);
+        Log.e(TAG, "WTF: "+ credential.toString());
         mAuth.signInWithCredential(credential)
                 .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
                     @Override
@@ -155,22 +159,22 @@ public class SignInActivity extends AppCompatActivity implements
                         } else {
                             setUserAddEventListener(mAuth.getCurrentUser().getDisplayName().replace(".", ""));
                             setInitialChannelAddEventListener();
+                            startActivity(new Intent(SignInActivity.this, MainActivity.class));
+                            finish();
                         }
                     }
                 });
     }
 
     private void setUserAddEventListener(final String username) {
-        sFirebaseDatabaseReference.child(UserUtil.USER_CHILD).addValueEventListener(new ValueEventListener() {
+        sFirebaseDatabaseReference.child(UserUtil.USER_CHILD).addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
+                Log.e(TAG, "setUserAddEventListener running.");
                 SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(SignInActivity.this);
                 SharedPreferences.Editor edit = sp.edit();
-
-                addUserIfExists(edit, dataSnapshot, username);
+                addUserIfExists(edit, dataSnapshot, UserUtil.parseUsername(username));
                 sFirebaseDatabaseReference.removeEventListener(this);
-                startActivity(new Intent(SignInActivity.this, MainActivity.class));
-                finish();
             }
 
             @Override
@@ -181,6 +185,7 @@ public class SignInActivity extends AppCompatActivity implements
     private void addUserIfExists(SharedPreferences.Editor edit, DataSnapshot dataSnapshot, String username) {
         boolean isUserInFirebase = false;
         //TODO: Change to email to prevent same display name
+        Log.e(TAG, "USERNAME: "+ username);
         edit.putString("username", mAuth.getCurrentUser().getDisplayName());
         edit.commit();
         //This checks the edgecase where firebase doesn't have any users at all
@@ -202,9 +207,8 @@ public class SignInActivity extends AppCompatActivity implements
         }
     }
 
-    //TODO firebase keeps adding in channels and listening for events
     private void setInitialChannelAddEventListener() {
-        sFirebaseDatabaseReference.child(ChannelUtil.CHANNELS_CHILD).addValueEventListener(new ValueEventListener() {
+        sFirebaseDatabaseReference.child(ChannelUtil.CHANNELS_CHILD).addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 checkIfChildChannelExists(dataSnapshot, "general");
@@ -241,7 +245,7 @@ public class SignInActivity extends AppCompatActivity implements
     private void createChannelIntoFirebase(String channelName) {
         HashMap<String, String> userList = new HashMap<>();
         //user list
-        userList.put(mAuth.getCurrentUser().getDisplayName(), mAuth.getCurrentUser().getDisplayName());
+        userList.put(UserUtil.parseUsername(mAuth.getCurrentUser().getDisplayName()), mAuth.getCurrentUser().getDisplayName());
         Channel channel = new Channel(userList, channelName, "General Purpose");
         ChannelUtil.createChannel(channel, true);
     }
@@ -251,7 +255,7 @@ public class SignInActivity extends AppCompatActivity implements
         channels.put("general", "general");
         channels.put("random", "random");
         HashMap<String, HashMap<String, String>> newUser = new HashMap<>();
-        newUser.put(mAuth.getCurrentUser().getDisplayName(), channels);
+        newUser.put(UserUtil.parseUsername(mAuth.getCurrentUser().getDisplayName()), channels);
         UserUtil.createUser(new User(newUser), this);
     }
 }

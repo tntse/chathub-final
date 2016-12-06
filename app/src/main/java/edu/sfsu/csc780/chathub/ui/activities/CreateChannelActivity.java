@@ -7,6 +7,7 @@ import android.preference.PreferenceManager;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.widget.Toolbar;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
@@ -53,9 +54,10 @@ public class CreateChannelActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_create_channel);
 
-        final ActionBar actionBar = getSupportActionBar();
-        actionBar.setDisplayHomeAsUpEnabled(true);
-        actionBar.setTitle("Create channel");
+        final Toolbar toolbar = (Toolbar) findViewById(R.id.channelCreateToolbar);
+        setSupportActionBar(toolbar);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        getSupportActionBar().setTitle("Create channel");
 
         mChannelDescription = (TextView)findViewById(R.id.channel_description);
         mChannelType = (TextView)findViewById(R.id.channel_type);
@@ -117,11 +119,9 @@ public class CreateChannelActivity extends AppCompatActivity {
         edit.apply();
 
         //Adding channel to user's list of channel
-        sFirebaseDatabaseReference.child(UserUtil.USER_CHILD).addValueEventListener(new ValueEventListener() {
+        sFirebaseDatabaseReference.child(UserUtil.USER_CHILD).addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
-
-                sFirebaseDatabaseReference.removeEventListener(this);
                 UserUtil.addChannelToUserChannelList(dataSnapshot, sp, channelName);
             }
 
@@ -132,7 +132,7 @@ public class CreateChannelActivity extends AppCompatActivity {
         boolean isPublic = mTypeSwitch.isChecked();
 
         //user list for channel
-        userList.put(mUser.getDisplayName(), mUser.getDisplayName());
+        userList.put(UserUtil.parseUsername(mUser.getDisplayName()), UserUtil.parseUsername(mUser.getDisplayName()));
         Channel channel = new Channel(userList, channelName, purpose);
         ChannelUtil.createChannel(channel, isPublic);
         Intent resultIntent = new Intent();

@@ -35,7 +35,7 @@ public class UserUtil {
     public static void createUser(User user, Activity activity) {
         final SharedPreferences preferences =
                 PreferenceManager.getDefaultSharedPreferences(activity);
-        sFirebaseDatabaseReference.child(USER_CHILD).child(sFirebaseAuth.getCurrentUser().getDisplayName()).setValue(user);
+        sFirebaseDatabaseReference.child(USER_CHILD).child(parseUsername(sFirebaseAuth.getCurrentUser().getDisplayName())).setValue(user);
     }
 
     public static class UserViewHolder extends RecyclerView.ViewHolder {
@@ -77,13 +77,18 @@ public class UserUtil {
         for(DataSnapshot user : dataSnapshot.getChildren()) {
             //If this is the correct user
             //and this user doesn't have the channel already in their channel list
-            if(user.getKey().equals(sp.getString("username", "")) &&
-                    !user.child("username").child(sp.getString("username", "")).toString().contains(channelName)) {
-                DatabaseReference channelList = user.child("username").child(sp.getString("username", "")).getRef();
+            String parsedUsername = parseUsername(sp.getString("username", ""));
+            if(user.getKey().equals(parsedUsername) &&
+                    !user.child("username").child(parsedUsername).toString().contains(channelName)) {
+                DatabaseReference channelList = user.child("username").child(parsedUsername).getRef();
                 Map<String, Object> channel = new HashMap<>();
                 channel.put(channelName, channelName);
                 channelList.updateChildren(channel);
             }
         }
+    }
+
+    public static String parseUsername(String str){
+        return str.replace('.', ' ').replace('#', ' ').replace('$', ' ').replace('[', ' ').replace(']', ' ');
     }
 }
