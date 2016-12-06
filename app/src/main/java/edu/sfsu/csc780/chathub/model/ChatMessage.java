@@ -22,32 +22,25 @@ public class ChatMessage {
     private String text;
     private String name;
     private String photoUrl;
-
-    public long getTimestamp() {
-        return timestamp;
-    }
-
     private long timestamp;
-    public static final long NO_TIMESTAMP = -1;
-
-    public String getImageUrl() {
-        return imageUrl;
-    }
-
     private String imageUrl;
+    private String channelName;
+
+    public static final long NO_TIMESTAMP = -1;
 
     public ChatMessage() {
     }
 
-    public ChatMessage(String text, String name, String photoUrl) {
+    public ChatMessage(String text, String name, String photoUrl, String currentChannel) {
         this.text = text;
         this.name = name;
         this.photoUrl = photoUrl;
         this.timestamp = new Date().getTime();
+        this.channelName = currentChannel;
     }
 
-    public ChatMessage(String text, String name, String photoUrl, String imageUrl) {
-        this(text, name, photoUrl);
+    public ChatMessage(String text, String name, String photoUrl, String currentChannel, String imageUrl) {
+        this(text, name, photoUrl, currentChannel);
         this.imageUrl = imageUrl;
     }
 
@@ -67,12 +60,28 @@ public class ChatMessage {
         this.name = name;
     }
 
+    public void setTimestamp(long newTimestamp){
+        this.timestamp = newTimestamp;
+    }
+
     public String getPhotoUrl() {
         return photoUrl;
     }
 
     public void setPhotoUrl(String photoUrl) {
         this.photoUrl = photoUrl;
+    }
+
+    public long getTimestamp() {
+        return timestamp;
+    }
+
+    public String getImageUrl() {
+        return imageUrl;
+    }
+
+    public String getChannelName(){
+        return channelName;
     }
 
 }
