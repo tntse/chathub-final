@@ -77,6 +77,8 @@ import com.sinch.android.rtc.calling.Call;
 import com.sinch.android.rtc.calling.CallClient;
 import com.sinch.android.rtc.calling.CallListener;
 
+import org.w3c.dom.Text;
+
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
@@ -124,6 +126,7 @@ public class MainActivity extends AppCompatActivity
     private EditText mMessageEditText;
     private NavigationView mNavigationView;
     private RelativeLayout mChannelAdd;
+    private TextView mCurrChanTextView;
 
     // Firebase instance variables
     private FirebaseAuth mAuth;
@@ -234,6 +237,9 @@ public class MainActivity extends AppCompatActivity
                 mMessageRecyclerView,
                 mImageClickListener);
         mMessageRecyclerView.setAdapter(mFirebaseAdapter);
+
+        mCurrChanTextView = (TextView) findViewById(R.id.currentChannelName);
+        mCurrChanTextView.setText(mCurrentChannel);
 
         mProgressBar.setVisibility(ProgressBar.INVISIBLE);
 
@@ -391,7 +397,7 @@ public class MainActivity extends AppCompatActivity
                 mMessageRecyclerView,
                 mImageClickListener);
         mMessageRecyclerView.swapAdapter(mFirebaseAdapter, false);
-
+        mCurrChanTextView.setText(mCurrentChannel);
         mNavRecyclerView.swapAdapter(ChannelUtil.getFirebaseAdapterForUserChannelList(this, mChannelClickListener), false);
     }
 
