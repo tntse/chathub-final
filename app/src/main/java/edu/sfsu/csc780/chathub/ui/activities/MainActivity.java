@@ -319,7 +319,8 @@ public class MainActivity extends AppCompatActivity
         mNavRecyclerView = (RecyclerView) findViewById(R.id.navRecyclerView);
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this);
         mNavRecyclerView.setLayoutManager(linearLayoutManager);
-        mNavRecyclerView.setAdapter(ChannelUtil.getFirebaseAdapterForUserChannelList(this, mChannelClickListener));
+        mNavRecyclerView.setAdapter(ChannelUtil.getFirebaseAdapterForUserChannelList(mChannelClickListener,
+                mAuth.getCurrentUser().getDisplayName()));
 
         RecyclerView userListRecyclerView = (RecyclerView) findViewById(R.id.userListRecyclerView);
         LinearLayoutManager linearLayoutManager2 = new LinearLayoutManager(this);
@@ -398,7 +399,9 @@ public class MainActivity extends AppCompatActivity
                 mImageClickListener);
         mMessageRecyclerView.swapAdapter(mFirebaseAdapter, false);
         mCurrChanTextView.setText(ChannelUtil.getChannelDisplayName(mCurrentChannel, this));
-        mNavRecyclerView.swapAdapter(ChannelUtil.getFirebaseAdapterForUserChannelList(this, mChannelClickListener), false);
+
+        mNavRecyclerView.swapAdapter(ChannelUtil.getFirebaseAdapterForUserChannelList(mChannelClickListener,
+                mSharedPreferences.getString("username", "anonymous")), false);
     }
 
     @Override
@@ -416,11 +419,16 @@ public class MainActivity extends AppCompatActivity
     @Override
     public void onResume() {
         super.onResume();
+        LocationUtils.startLocationUpdates(this);
+
+        if(mSinchClient == null) {
+            return;
+        }
+
         if(!mSinchClient.isStarted()) {
             mSinchClient.addSinchClientListener(new ChathubSinchClientListener());
             mSinchClient.start();
         }
-        LocationUtils.startLocationUpdates(this);
     }
 
     @Override
@@ -438,6 +446,10 @@ public class MainActivity extends AppCompatActivity
     @Override
     public void onDestroy() {
         super.onDestroy();
+        if(mSinchClient == null) {
+            return;
+        }
+
         if(mSinchClient.isStarted()) {
             mSinchClient.stopListeningOnActiveConnection();
             mSinchClient.terminate();
