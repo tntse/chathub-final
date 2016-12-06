@@ -23,6 +23,9 @@ import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
+import android.widget.ImageView;
 import android.widget.Toast;
 
 import com.google.android.gms.auth.api.Auth;
@@ -62,6 +65,7 @@ public class SignInActivity extends AppCompatActivity implements
     private static final int RC_SIGN_IN = 9001;
 
     private SignInButton mSignInButton;
+    private ImageView mSlackImageView;
 
     private GoogleApiClient mGoogleApiClient;
 
@@ -77,7 +81,7 @@ public class SignInActivity extends AppCompatActivity implements
 
         // Assign fields
         mSignInButton = (SignInButton) findViewById(R.id.sign_in_button);
-
+        mSlackImageView = (ImageView) findViewById(R.id.slack_logo);
         // Set click listeners
         mSignInButton.setOnClickListener(this);
 
@@ -130,6 +134,10 @@ public class SignInActivity extends AppCompatActivity implements
             GoogleSignInResult result = Auth.GoogleSignInApi.getSignInResultFromIntent(data);
             Log.e(TAG, "data:" + data.getExtras().toString());
             if (result.isSuccess()) {
+                mSlackImageView.setVisibility(View.VISIBLE);
+                Animation rotation = AnimationUtils.loadAnimation(getBaseContext(), R.anim.rotate);
+                mSlackImageView.setAnimation(rotation);
+                mSignInButton.setVisibility(View.INVISIBLE);
                 // successful, now authenticate with Firebase
                 GoogleSignInAccount account = result.getSignInAccount();
                 firebaseAuthWithGoogle(account);
@@ -156,6 +164,8 @@ public class SignInActivity extends AppCompatActivity implements
                             Log.w(TAG, "signInWithCredential", task.getException());
                             Toast.makeText(SignInActivity.this, "Authentication failed.", Toast
                                     .LENGTH_SHORT).show();
+                            mSlackImageView.setVisibility(View.INVISIBLE);
+                            mSignInButton.setVisibility(View.VISIBLE);
                         } else {
                             setUserAddEventListener(mAuth.getCurrentUser().getDisplayName().replace(".", ""));
                             setInitialChannelAddEventListener();

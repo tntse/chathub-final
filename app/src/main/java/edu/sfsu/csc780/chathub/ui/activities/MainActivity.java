@@ -410,11 +410,16 @@ public class MainActivity extends AppCompatActivity
     @Override
     public void onResume() {
         super.onResume();
+        LocationUtils.startLocationUpdates(this);
+
+        if(mSinchClient == null) {
+            return;
+        }
+
         if(!mSinchClient.isStarted()) {
             mSinchClient.addSinchClientListener(new ChathubSinchClientListener());
             mSinchClient.start();
         }
-        LocationUtils.startLocationUpdates(this);
     }
 
     @Override
@@ -432,6 +437,10 @@ public class MainActivity extends AppCompatActivity
     @Override
     public void onDestroy() {
         super.onDestroy();
+        if(mSinchClient == null) {
+            return;
+        }
+
         if(mSinchClient.isStarted()) {
             mSinchClient.stopListeningOnActiveConnection();
             mSinchClient.terminate();
