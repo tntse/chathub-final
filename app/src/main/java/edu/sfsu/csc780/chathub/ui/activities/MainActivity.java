@@ -21,6 +21,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
+import android.graphics.Color;
 import android.media.AudioManager;
 import android.net.Uri;
 import android.os.Bundle;
@@ -308,6 +309,11 @@ public class MainActivity extends AppCompatActivity
         });
 
         SearchView jumpSearchView = (SearchView) findViewById(R.id.jumpSearch);
+        int id = jumpSearchView.getContext().getResources().getIdentifier("android:id/search_src_text", null, null);
+        TextView textView = (TextView) jumpSearchView.findViewById(id);
+        textView.setTextColor(Color.WHITE);
+        textView.setHintTextColor(Color.WHITE);
+
         jumpSearchView.setIconified(false);
         jumpSearchView.setOnClickListener(new View.OnClickListener() {
             @Override

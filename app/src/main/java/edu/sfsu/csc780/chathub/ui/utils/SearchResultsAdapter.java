@@ -47,6 +47,9 @@ public class SearchResultsAdapter extends RecyclerView.Adapter<SearchResultsAdap
     public void onBindViewHolder(SearchViewHolder holder, int position) {
         ChatMessage message = mMessageList.get(position);
         holder.messageChannel.setText(message.getChannelName());
+        if(message.getChannelName().contains("Private")){
+            holder.poundSymbol.setText("@");
+        }
         setPhotoAndMessage(holder, message, mSharedPrefs);
         setTimestamp(message, holder);
 
@@ -119,6 +122,7 @@ public class SearchResultsAdapter extends RecyclerView.Adapter<SearchResultsAdap
         public TextView timestampTextView;
         public View messageLayout;
         public TextView messageChannel;
+        public TextView poundSymbol;
 
         public SearchViewHolder(View v){
             super(v);
@@ -128,6 +132,7 @@ public class SearchResultsAdapter extends RecyclerView.Adapter<SearchResultsAdap
             timestampTextView = (TextView) itemView.findViewById(R.id.timestampTextView);
             messageLayout = (View) itemView.findViewById(R.id.messageLayout);
             messageChannel = (TextView) itemView.findViewById(R.id.foundChannel);
+            poundSymbol = (TextView) itemView.findViewById(R.id.pound_sign);
         }
 
     }

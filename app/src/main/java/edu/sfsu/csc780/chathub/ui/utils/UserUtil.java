@@ -41,14 +41,12 @@ public class UserUtil {
     public static class UserViewHolder extends RecyclerView.ViewHolder {
         public final View mView;
         public final TextView username;
-        public final ImageView icon;
         public static View.OnClickListener sChannelViewListener;
 
         public UserViewHolder(View view) {
             super(view);
             mView = view;
             username = (TextView) view.findViewById(R.id.username);
-            icon = (ImageView) view.findViewById(R.id.active_icon);
             mView.setOnClickListener(sChannelViewListener);
         }
     }

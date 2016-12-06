@@ -3,7 +3,6 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/activity_channel_search"
     android:layout_width="match_parent"
-    android:layout_marginTop="@dimen/activity_vertical_margin"
     android:layout_height="match_parent"
     tools:context="edu.sfsu.csc780.chathub.ui.activities.ChannelSearchActivity">
 
@@ -13,7 +12,9 @@
         android:layout_width="match_parent"
         android:layout_alignParentTop="true"
         android:minHeight="?attr/actionBarSize"
-        android:background="?attr/colorPrimary" />
+        android:background="?attr/colorPrimary"
+        android:paddingTop="@dimen/activity_vertical_margin"
+        />
 
     <RelativeLayout
         android:layout_below="@+id/channelSearchToolbar"
