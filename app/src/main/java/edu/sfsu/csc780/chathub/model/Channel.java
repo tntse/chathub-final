@@ -1,7 +1,6 @@
 package edu.sfsu.csc780.chathub.model;
 
 import java.util.HashMap;
-import java.util.List;
 
 /**
  * Created by david on 11/21/16.
@@ -11,6 +10,7 @@ public class Channel{
     private HashMap<String, String> userList;
     private String channelName;
     private String channelTopic;
+
 
     public Channel() {}
 

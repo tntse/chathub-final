@@ -15,7 +15,6 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.firebase.ui.database.FirebaseRecyclerAdapter;
 import com.google.firebase.database.DataSnapshot;
@@ -23,9 +22,6 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
-
-import java.util.HashMap;
-import java.util.Map;
 
 import edu.sfsu.csc780.chathub.R;
 import edu.sfsu.csc780.chathub.model.Channel;
@@ -52,7 +48,7 @@ public class ChannelSearchActivity extends AppCompatActivity {
             SharedPreferences.Editor edit = sp.edit();
             edit.putString("currentChannel", channelName.getText().toString());
             edit.apply();
-            //Toast.makeText(ChannelSearchActivity.this, channelName.getText().toString(), Toast.LENGTH_LONG).show();
+
             Log.e(TAG, channelName.getText().toString());
             //Adds to user's channels list
             sFirebaseDatabaseReference.child(UserUtil.USER_CHILD).addListenerForSingleValueEvent(new ValueEventListener() {

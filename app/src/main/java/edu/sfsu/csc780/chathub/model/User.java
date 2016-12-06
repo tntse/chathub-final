@@ -1,7 +1,6 @@
 package edu.sfsu.csc780.chathub.model;
 
 import java.util.HashMap;
-import java.util.List;
 
 /**
  * Created by david on 11/23/16.
