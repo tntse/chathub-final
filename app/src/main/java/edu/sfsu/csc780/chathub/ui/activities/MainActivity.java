@@ -267,7 +267,7 @@ public class MainActivity extends AppCompatActivity
                 ChatMessage chatMessage = new
                         ChatMessage(mMessageEditText.getText().toString(),
                         mUsername,
-                        mPhotoUrl);
+                        mPhotoUrl, mCurrentChannel);
                 MessageUtil.send(chatMessage, MainActivity.this);
                 mMessageEditText.setText("");
             }
@@ -561,7 +561,7 @@ public class MainActivity extends AppCompatActivity
                 ChatMessage chatMessage = new
                         ChatMessage(mMessageEditText.getText().toString(),
                         mUsername,
-                        mPhotoUrl, imageReference.toString());
+                        mPhotoUrl, mCurrentChannel, imageReference.toString());
                 MessageUtil.send(chatMessage, MainActivity.this);
                 mMessageEditText.setText("");
             }
