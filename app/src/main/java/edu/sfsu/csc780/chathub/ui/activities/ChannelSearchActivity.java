@@ -77,7 +77,7 @@ public class ChannelSearchActivity extends AppCompatActivity {
                 @Override
                 public void onCancelled(DatabaseError databaseError) {}
             });
-            
+
             //Change view to channel message view
             Intent resultIntent = new Intent();
             setResult(Activity.RESULT_OK, resultIntent);
