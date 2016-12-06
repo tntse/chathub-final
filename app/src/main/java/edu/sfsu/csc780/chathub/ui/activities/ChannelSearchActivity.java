@@ -55,7 +55,7 @@ public class ChannelSearchActivity extends AppCompatActivity {
             //Toast.makeText(ChannelSearchActivity.this, channelName.getText().toString(), Toast.LENGTH_LONG).show();
             Log.e(TAG, channelName.getText().toString());
             //Adds to user's channels list
-            sFirebaseDatabaseReference.child(UserUtil.USER_CHILD).addValueEventListener(new ValueEventListener() {
+            sFirebaseDatabaseReference.child(UserUtil.USER_CHILD).addListenerForSingleValueEvent(new ValueEventListener() {
                 @Override
                 public void onDataChange(DataSnapshot dataSnapshot) {
                     sFirebaseDatabaseReference.removeEventListener(this);
@@ -67,7 +67,7 @@ public class ChannelSearchActivity extends AppCompatActivity {
             });
 
             //Add to channel's user list
-            sFirebaseDatabaseReference.child(ChannelUtil.CHANNELS_CHILD).addValueEventListener(new ValueEventListener() {
+            sFirebaseDatabaseReference.child(ChannelUtil.CHANNELS_CHILD).addListenerForSingleValueEvent(new ValueEventListener() {
                 @Override
                 public void onDataChange(DataSnapshot dataSnapshot) {
                     sFirebaseDatabaseReference.removeEventListener(this);
@@ -77,8 +77,12 @@ public class ChannelSearchActivity extends AppCompatActivity {
                 @Override
                 public void onCancelled(DatabaseError databaseError) {}
             });
+            
+            //Change view to channel message view
+            Intent resultIntent = new Intent();
+            setResult(Activity.RESULT_OK, resultIntent);
+            finish();
 
-            // TODO: Change view to channel message view
         }
     };
 
@@ -129,7 +133,8 @@ public class ChannelSearchActivity extends AppCompatActivity {
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         if(requestCode == REQUEST_NEW_CHANNEL) {
             if(resultCode == Activity.RESULT_OK) {
-                //TODO: Main Activity has to change layout to show changed channel
+                Intent resultIntent = new Intent();
+                setResult(Activity.RESULT_OK, resultIntent);
                 finish();
             }
         }

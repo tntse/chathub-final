@@ -101,7 +101,6 @@ public class ChannelUtil {
         return adapter;
     }
 
-    //TODO: For some reason, it adds Random channel twice?
     public static void addUserToChannelList(Iterable<DataSnapshot> channelList, String channelName) {
         //This method is for adding a user to random's or general's userlist
         //Iterate through the list of channels

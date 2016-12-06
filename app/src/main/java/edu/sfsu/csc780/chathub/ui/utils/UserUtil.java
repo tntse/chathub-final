@@ -77,9 +77,10 @@ public class UserUtil {
         for(DataSnapshot user : dataSnapshot.getChildren()) {
             //If this is the correct user
             //and this user doesn't have the channel already in their channel list
-            if(user.getKey().equals(sp.getString("username", "")) &&
-                    !user.child("username").child(sp.getString("username", "")).toString().contains(channelName)) {
-                DatabaseReference channelList = user.child("username").child(sp.getString("username", "")).getRef();
+            String parsedUsername = parseUsername(sp.getString("username", ""));
+            if(user.getKey().equals(parsedUsername) &&
+                    !user.child("username").child(parsedUsername).toString().contains(channelName)) {
+                DatabaseReference channelList = user.child("username").child(parsedUsername).getRef();
                 Map<String, Object> channel = new HashMap<>();
                 channel.put(channelName, channelName);
                 channelList.updateChildren(channel);

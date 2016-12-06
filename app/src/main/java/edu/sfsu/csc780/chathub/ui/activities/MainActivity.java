@@ -28,6 +28,7 @@ import android.provider.MediaStore;
 import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.NavigationView;
+import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.app.LoaderManager;
@@ -46,11 +47,13 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
+import android.widget.SearchView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -65,6 +68,12 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
+import com.sinch.android.rtc.PushPair;
+import com.sinch.android.rtc.Sinch;
+import com.sinch.android.rtc.SinchClient;
+import com.sinch.android.rtc.calling.Call;
+import com.sinch.android.rtc.calling.CallClient;
+import com.sinch.android.rtc.calling.CallListener;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -72,9 +81,13 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.List;
 
 import edu.sfsu.csc780.chathub.R;
+import edu.sfsu.csc780.chathub.model.APIKeys;
 import edu.sfsu.csc780.chathub.model.ChatMessage;
+import edu.sfsu.csc780.chathub.model.ChathubSinchClientListener;
+import edu.sfsu.csc780.chathub.ui.utils.AudioUtil;
 import edu.sfsu.csc780.chathub.ui.utils.ChannelUtil;
 import edu.sfsu.csc780.chathub.ui.utils.MessageUtil;
 import edu.sfsu.csc780.chathub.ui.utils.DesignUtils;
@@ -88,13 +101,14 @@ public class MainActivity extends AppCompatActivity
         MessageUtil.MessageLoadListener {
 
     private static final String TAG = "MainActivity";
-    private static final int REQUEST_SEARCH = 1;
-    private static final int REQUEST_TAKE_PHOTO = 3;
+    private static final int REQUEST_PICK_IMAGE = 1;
     public static final int REQUEST_PREFERENCES = 2;
+    private static final int REQUEST_TAKE_PHOTO = 3;
+    private static final int REQUEST_NEW_CHANNEL = 4;
+    private static final int REQUEST_SEARCH = 5;
     public static final int MSG_LENGTH_LIMIT = 64;
     private static final double MAX_LINEAR_DIMENSION = 500.0;
     public static final String ANONYMOUS = "anonymous";
-    private static final int REQUEST_PICK_IMAGE = 1;
     private String mUsername;
     private String mPhotoUrl;
     private SharedPreferences mSharedPreferences;
@@ -102,6 +116,7 @@ public class MainActivity extends AppCompatActivity
 
     private FloatingActionButton mSendButton;
     private RecyclerView mMessageRecyclerView;
+    private RecyclerView mNavRecyclerView;
     private LinearLayoutManager mLinearLayoutManager;
     private ProgressBar mProgressBar;
     private EditText mMessageEditText;
@@ -114,6 +129,10 @@ public class MainActivity extends AppCompatActivity
 
     private FirebaseRecyclerAdapter<ChatMessage, MessageUtil.MessageViewHolder>
             mFirebaseAdapter;
+
+    private SinchClient mSinchClient;
+    private Call call;
+    private boolean canCall = true;
 
     private Toolbar mToolBar;
     private ImageButton mImageButton;
@@ -139,23 +158,17 @@ public class MainActivity extends AppCompatActivity
         public void onClick(View view) {
             //Change channel here
             TextView channel = (TextView) view.findViewById(R.id.channelNameText);
+            String channelName = "";
             if(channel == null) {
                 channel = (TextView) view.findViewById(R.id.username);
+                channelName = channel.getText().toString()+"="+mSharedPreferences.getString("username", "anonymous");
+            } else {
+                channelName = channel.getText().toString();
             }
             SharedPreferences.Editor edit = mSharedPreferences.edit();
-            edit.putString("currentChannel", channel.getText().toString());
+            edit.putString("currentChannel", channelName);
             edit.apply();
-            mCurrentChannel = mSharedPreferences.getString("currentChannel", "general");
-            Toast.makeText(MainActivity.this, channel.getText().toString(), Toast.LENGTH_SHORT).show();
-            mFirebaseAdapter = MessageUtil.getFirebaseAdapter(MainActivity.this,
-                    MainActivity.this,  /* MessageLoadListener */
-                    mLinearLayoutManager,
-                    mMessageRecyclerView,
-                    mImageClickListener);
-            mMessageRecyclerView.swapAdapter(mFirebaseAdapter, false);
-//            mFirebaseAdapter.cleanup();
-
-//            mMessageRecyclerView.setAdapter(mFirebaseAdapter);
+            setChannelPage();
         }
     };
 
@@ -181,6 +194,16 @@ public class MainActivity extends AppCompatActivity
                 mPhotoUrl = mUser.getPhotoUrl().toString();
             }
         }
+
+        AudioUtil.startAudioListener(this);
+
+        mSinchClient = Sinch.getSinchClientBuilder().context(getApplicationContext())
+                .applicationKey(APIKeys.SINCH_API_KEY)
+                .applicationSecret(APIKeys.SINCH_APP_SECRET)
+                .environmentHost("sandbox.sinch.com")
+                .userId(mSharedPreferences.getString("username", "anonymous"))
+                .build();
+        mSinchClient.setSupportCalling(true);
 
         mCurrentChannel = mSharedPreferences.getString("currentChannel", "general");
 
@@ -277,20 +300,71 @@ public class MainActivity extends AppCompatActivity
             @Override
             public void onClick(View view) {
                 Intent intent = new Intent(MainActivity.this, ChannelSearchActivity.class);
-                startActivity(intent);
+                startActivityForResult(intent, REQUEST_NEW_CHANNEL);
             }
         });
 
-        RecyclerView navRecyclerView = (RecyclerView) findViewById(R.id.navRecyclerView);
+        SearchView jumpSearchView = (SearchView) findViewById(R.id.jumpSearch);
+        jumpSearchView.setIconified(false);
+        jumpSearchView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Toast.makeText(MainActivity.this, "Not implemented", Toast.LENGTH_SHORT).show();
+            }
+        });
+
+        mNavRecyclerView = (RecyclerView) findViewById(R.id.navRecyclerView);
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this);
-        navRecyclerView.setLayoutManager(linearLayoutManager);
-        //TODO When a new channel is created, it is not clickable until you exit the app
-        navRecyclerView.setAdapter(ChannelUtil.getFirebaseAdapterForUserChannelList(this, mChannelClickListener));
+        mNavRecyclerView.setLayoutManager(linearLayoutManager);
+        mNavRecyclerView.setAdapter(ChannelUtil.getFirebaseAdapterForUserChannelList(this, mChannelClickListener));
 
         RecyclerView userListRecyclerView = (RecyclerView) findViewById(R.id.userListRecyclerView);
         LinearLayoutManager linearLayoutManager2 = new LinearLayoutManager(this);
         userListRecyclerView.setLayoutManager(linearLayoutManager2);
         userListRecyclerView.setAdapter(UserUtil.getFirebaseAdapterForUserList(mChannelClickListener));
+
+        Button voiceCallButton = (Button) findViewById(R.id.voiceCall);
+        voiceCallButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                CallClient callClient = mSinchClient.getCallClient();
+                if(canCall) {
+                    call = callClient.callConference("General");
+                    call.addCallListener(new CallListener() {
+                        @Override
+                        public void onCallProgressing(Call call) {
+                            Log.d("Call", "Call progressing");
+                        }
+
+                        @Override
+                        public void onCallEstablished(Call call) {
+                            Log.d("Call", "Calling now");
+                        }
+
+                        @Override
+                        public void onCallEnded(Call call) {
+                            Log.d("Call", "Stopped calling");
+                        }
+
+                        @Override
+                        public void onShouldSendPushNotification(Call call, List<PushPair> list) {
+                            Log.d("Call", "Push");
+                        }
+                    });
+                }
+            }
+        });
+
+        Button endCallButton = (Button) findViewById(R.id.endCall);
+        endCallButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if(call != null) {
+                    call.hangup();
+                    call = null;
+                }
+            }
+        });
     }
 
     private void dispatchTakePhotoIntent() {
@@ -300,6 +374,18 @@ public class MainActivity extends AppCompatActivity
         if (takePictureIntent.resolveActivity(getPackageManager()) != null) {
             startActivityForResult(takePictureIntent, REQUEST_TAKE_PHOTO);
         }
+    }
+
+    private void setChannelPage() {
+        mCurrentChannel = mSharedPreferences.getString("currentChannel", "general");
+        mFirebaseAdapter = MessageUtil.getFirebaseAdapter(MainActivity.this,
+                MainActivity.this,  /* MessageLoadListener */
+                mLinearLayoutManager,
+                mMessageRecyclerView,
+                mImageClickListener);
+        mMessageRecyclerView.swapAdapter(mFirebaseAdapter, false);
+
+        mNavRecyclerView.swapAdapter(ChannelUtil.getFirebaseAdapterForUserChannelList(this, mChannelClickListener), false);
     }
 
     @Override
@@ -312,11 +398,15 @@ public class MainActivity extends AppCompatActivity
     @Override
     public void onPause() {
         super.onPause();
+        mSinchClient.stopListeningOnActiveConnection();
+        mSinchClient.terminate();
     }
 
     @Override
     public void onResume() {
         super.onResume();
+        mSinchClient.addSinchClientListener(new ChathubSinchClientListener());
+        mSinchClient.start();
         LocationUtils.startLocationUpdates(this);
     }
 
@@ -327,6 +417,8 @@ public class MainActivity extends AppCompatActivity
                 && grantResults[0] == PackageManager.PERMISSION_GRANTED);
         if (isGranted && requestCode == LocationUtils.REQUEST_CODE) {
             LocationUtils.startLocationUpdates(this);
+        } else if(!isGranted || requestCode != AudioUtil.REQUEST_CODE) {
+            canCall = false;
         }
     }
 
@@ -432,6 +524,8 @@ public class MainActivity extends AppCompatActivity
                 DesignUtils.applyColorfulTheme(this);
                 this.recreate();
             }
+        } else if (requestCode == REQUEST_NEW_CHANNEL && resultCode == Activity.RESULT_OK) {
+            setChannelPage();
         }
     }
 
