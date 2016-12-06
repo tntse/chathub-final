@@ -20,6 +20,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
+import android.media.AudioManager;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
@@ -333,16 +334,19 @@ public class MainActivity extends AppCompatActivity
                     call.addCallListener(new CallListener() {
                         @Override
                         public void onCallProgressing(Call call) {
+                            setVolumeControlStream(AudioManager.STREAM_VOICE_CALL);
                             Log.d("Call", "Call progressing");
                         }
 
                         @Override
                         public void onCallEstablished(Call call) {
+                            setVolumeControlStream(AudioManager.STREAM_VOICE_CALL);
                             Log.d("Call", "Calling now");
                         }
 
                         @Override
                         public void onCallEnded(Call call) {
+                            setVolumeControlStream(AudioManager.USE_DEFAULT_STREAM_TYPE);
                             Log.d("Call", "Stopped calling");
                         }
 
