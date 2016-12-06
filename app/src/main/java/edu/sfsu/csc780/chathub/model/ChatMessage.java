@@ -74,4 +74,5 @@ public class ChatMessage {
     public void setPhotoUrl(String photoUrl) {
         this.photoUrl = photoUrl;
     }
+
 }
