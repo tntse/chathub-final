@@ -122,6 +122,7 @@ public class MainActivity extends AppCompatActivity
     private EditText mMessageEditText;
     private RelativeLayout mChannelAdd;
     private TextView mCurrChanTextView;
+    private TextView mCallProgressTextView;
 
     // Firebase instance variables
     private FirebaseAuth mAuth;
@@ -326,6 +327,8 @@ public class MainActivity extends AppCompatActivity
         userListRecyclerView.setAdapter(UserUtil.getFirebaseAdapterForUserList(mChannelClickListener));
 
         Button voiceCallButton = (Button) findViewById(R.id.voiceCall);
+        mCallProgressTextView = (TextView) findViewById(R.id.callinprogress);
+
         final AudioManager audioManager = (AudioManager) getApplicationContext().getSystemService(Context.AUDIO_SERVICE);
         voiceCallButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -344,6 +347,7 @@ public class MainActivity extends AppCompatActivity
                         @Override
                         public void onCallEstablished(Call call) {
                             setVolumeControlStream(AudioManager.STREAM_VOICE_CALL);
+                            mCallProgressTextView.setVisibility(View.VISIBLE);
                             Log.d("Call", "Calling now");
                         }
 
@@ -351,6 +355,7 @@ public class MainActivity extends AppCompatActivity
                         public void onCallEnded(Call call) {
                             setVolumeControlStream(AudioManager.USE_DEFAULT_STREAM_TYPE);
                             Log.d("Call", "Stopped calling");
+                            mCallProgressTextView.setVisibility(View.INVISIBLE);
                         }
 
                         @Override
