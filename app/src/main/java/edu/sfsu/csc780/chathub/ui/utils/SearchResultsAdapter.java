@@ -48,6 +48,7 @@ public class SearchResultsAdapter extends RecyclerView.Adapter<SearchResultsAdap
         ChatMessage message = mMessageList.get(position);
         holder.messageChannel.setText(message.getChannelName());
         setPhotoAndMessage(holder, message, mSharedPrefs);
+        setTimestamp(message, holder);
 
     }
 
@@ -84,6 +85,19 @@ public class SearchResultsAdapter extends RecyclerView.Adapter<SearchResultsAdap
                     .load(chatMessage.getPhotoUrl())
                     .asBitmap()
                     .into(target);
+        }
+    }
+
+
+    private void setTimestamp(ChatMessage chatMessage,
+                                     final SearchResultsAdapter.SearchViewHolder viewHolder) {
+        long timestamp = chatMessage.getTimestamp();
+        if (timestamp == 0 || timestamp == chatMessage.NO_TIMESTAMP ) {
+            viewHolder.timestampTextView.setVisibility(View.GONE);
+        } else {
+            viewHolder.timestampTextView.setText(DesignUtils.formatTime(mActivity,
+                    timestamp));
+            viewHolder.timestampTextView.setVisibility(View.VISIBLE);
         }
     }
 
