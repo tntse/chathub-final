@@ -140,38 +140,33 @@ public class MessageSearchActivity extends AppCompatActivity
         final SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
 
         sFirebaseDatabaseReference.child(MessageUtil.MESSAGES_CHILD).addListenerForSingleValueEvent(new ValueEventListener() {
-            // TODO: Rearrange Nested Ifs
-            // TODO: Fix Channel names in Search Results.
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 for(DataSnapshot channels : dataSnapshot.getChildren()) {
                     for (DataSnapshot message : channels.getChildren()) {
-                        if (channels.getKey().contains("=")) {
-                            if (channels.getKey().contains(UserUtil.parseUsername(sharedPreferences.getString("username", "anonymous"))) &&
-                                    message.child("text").getValue().toString().toLowerCase().contains(query.toLowerCase())) {
-                                ChatMessage currMessage = new ChatMessage(
-                                        message.child("text").getValue().toString(),    // text
-                                        message.child("name").getValue().toString(),    // username
-                                        message.child("photoUrl").getValue().toString(),// user photo
-                                        channels.getKey()                               // channel
-                                );
 
-                                currMessage.setTimestamp((Long) message.child("timestamp").getValue()); //timestamp
-                                foundMessages.add(currMessage);
-                            }
-                        }else{
-                            if(message.child("text").getValue().toString().toLowerCase().contains(query.toLowerCase())){
+                        if(message.child("text").getValue().toString().toLowerCase().contains(query.toLowerCase())){
+                            if((channels.getKey().contains("=") &&
+                                    channels.getKey().indexOf(UserUtil.parseUsername(sharedPreferences.getString("username", "anonymous"))) == 0) ||
+                                    !channels.getKey().contains("=")){
+
+                                String messageChannel = channels.getKey();
+                                if(messageChannel.contains("=")){
+                                    int start = UserUtil.parseUsername(sharedPreferences.getString("username", "anonymous")).length() + 1;
+                                    messageChannel = "Private Conversation with " + messageChannel.substring(start);
+                                }
                                 ChatMessage currMessage = new ChatMessage(
                                         message.child("text").getValue().toString(),    // text
                                         message.child("name").getValue().toString(),    // username
                                         message.child("photoUrl").getValue().toString(),// user photo
-                                        channels.getKey()                               // channel
+                                        messageChannel                             // channel
                                 );
 
                                 currMessage.setTimestamp((Long) message.child("timestamp").getValue()); //timestamp
                                 foundMessages.add(currMessage);
                             }
                         }
+
                     }
                 }
                 ((MessagesListFragment)fragmentManager.findFragmentByTag("messages")).setChatMessages(foundMessages);
