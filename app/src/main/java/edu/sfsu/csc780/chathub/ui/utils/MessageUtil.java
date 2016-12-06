@@ -94,7 +94,7 @@ public class MessageUtil {
                 ChatMessage.class,
                 R.layout.item_message,
                 MessageViewHolder.class,
-                sFirebaseDatabaseReference.child(MESSAGES_CHILD).child(preferences.getString("currentChannel", "general"))) {
+                sFirebaseDatabaseReference.child(MESSAGES_CHILD).child(UserUtil.parseUsername(preferences.getString("currentChannel", "general")))) {
             @Override
             protected void populateViewHolder(final MessageViewHolder viewHolder,
                                               ChatMessage chatMessage, int position) {

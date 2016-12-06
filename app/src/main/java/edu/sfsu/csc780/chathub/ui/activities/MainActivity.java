@@ -16,6 +16,7 @@
 package edu.sfsu.csc780.chathub.ui.activities;
 
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
@@ -162,7 +163,7 @@ public class MainActivity extends AppCompatActivity
             String channelName = "";
             if(channel == null) {
                 channel = (TextView) view.findViewById(R.id.username);
-                channelName = channel.getText().toString()+"="+mSharedPreferences.getString("username", "anonymous");
+                channelName = channel.getText().toString()+"="+UserUtil.parseUsername(mSharedPreferences.getString("username", "anonymous"));
             } else {
                 channelName = channel.getText().toString();
             }
@@ -202,7 +203,7 @@ public class MainActivity extends AppCompatActivity
                 .applicationKey(APIKeys.SINCH_API_KEY)
                 .applicationSecret(APIKeys.SINCH_APP_SECRET)
                 .environmentHost("sandbox.sinch.com")
-                .userId(mSharedPreferences.getString("username", "anonymous"))
+                .userId(UserUtil.parseUsername(mSharedPreferences.getString("username", "anonymous")))
                 .build();
         mSinchClient.setSupportCalling(true);
 
@@ -325,6 +326,7 @@ public class MainActivity extends AppCompatActivity
         userListRecyclerView.setAdapter(UserUtil.getFirebaseAdapterForUserList(mChannelClickListener));
 
         Button voiceCallButton = (Button) findViewById(R.id.voiceCall);
+        final AudioManager audioManager = (AudioManager) getApplicationContext().getSystemService(Context.AUDIO_SERVICE);
         voiceCallButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -334,7 +336,8 @@ public class MainActivity extends AppCompatActivity
                     call.addCallListener(new CallListener() {
                         @Override
                         public void onCallProgressing(Call call) {
-                            setVolumeControlStream(AudioManager.STREAM_VOICE_CALL);
+                            //setVolumeControlStream(AudioManager.STREAM_VOICE_CALL);
+                            audioManager.adjustStreamVolume(AudioManager.STREAM_VOICE_CALL, AudioManager.ADJUST_RAISE, 10);
                             Log.d("Call", "Call progressing");
                         }
 
@@ -381,7 +384,7 @@ public class MainActivity extends AppCompatActivity
     }
 
     private void setChannelPage() {
-        mCurrentChannel = mSharedPreferences.getString("currentChannel", "general");
+        mCurrentChannel = UserUtil.parseUsername(mSharedPreferences.getString("currentChannel", "general"));
         mFirebaseAdapter = MessageUtil.getFirebaseAdapter(MainActivity.this,
                 MainActivity.this,  /* MessageLoadListener */
                 mLinearLayoutManager,
@@ -402,15 +405,19 @@ public class MainActivity extends AppCompatActivity
     @Override
     public void onPause() {
         super.onPause();
-        mSinchClient.stopListeningOnActiveConnection();
-        mSinchClient.terminate();
+        if(mSinchClient.isStarted()) {
+            mSinchClient.stopListeningOnActiveConnection();
+            mSinchClient.terminate();
+        }
     }
 
     @Override
     public void onResume() {
         super.onResume();
-        mSinchClient.addSinchClientListener(new ChathubSinchClientListener());
-        mSinchClient.start();
+        if(!mSinchClient.isStarted()) {
+            mSinchClient.addSinchClientListener(new ChathubSinchClientListener());
+            mSinchClient.start();
+        }
         LocationUtils.startLocationUpdates(this);
     }
 
