@@ -405,10 +405,6 @@ public class MainActivity extends AppCompatActivity
     @Override
     public void onPause() {
         super.onPause();
-        if(mSinchClient.isStarted()) {
-            mSinchClient.stopListeningOnActiveConnection();
-            mSinchClient.terminate();
-        }
     }
 
     @Override
@@ -436,6 +432,10 @@ public class MainActivity extends AppCompatActivity
     @Override
     public void onDestroy() {
         super.onDestroy();
+        if(mSinchClient.isStarted()) {
+            mSinchClient.stopListeningOnActiveConnection();
+            mSinchClient.terminate();
+        }
     }
 
     @Override

@@ -4,8 +4,10 @@ import android.app.Fragment;
 import android.app.FragmentManager;
 import android.app.FragmentTransaction;
 import android.app.SearchManager;
+import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.net.Uri;
+import android.preference.PreferenceManager;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.view.MenuItemCompat;
 import android.support.v7.app.AppCompatActivity;
@@ -28,6 +30,7 @@ import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.prefs.Preferences;
 
 import edu.sfsu.csc780.chathub.R;
 import edu.sfsu.csc780.chathub.model.ChatMessage;
@@ -35,6 +38,7 @@ import edu.sfsu.csc780.chathub.ui.fragments.FilesFragment;
 import edu.sfsu.csc780.chathub.ui.fragments.MessagesListFragment;
 import edu.sfsu.csc780.chathub.ui.utils.FragmentTabHost;
 import edu.sfsu.csc780.chathub.ui.utils.MessageUtil;
+import edu.sfsu.csc780.chathub.ui.utils.UserUtil;
 
 public class MessageSearchActivity extends AppCompatActivity
         implements FilesFragment.OnFragmentInteractionListener,
@@ -133,22 +137,40 @@ public class MessageSearchActivity extends AppCompatActivity
     private void searchForMessages(final String query) {
         Log.e("Test", "I'm in searchMessage");
         final List<ChatMessage> foundMessages = new ArrayList<>();
+        final SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
 
         sFirebaseDatabaseReference.child(MessageUtil.MESSAGES_CHILD).addListenerForSingleValueEvent(new ValueEventListener() {
+            // TODO: Rearrange Nested Ifs
+            // TODO: Fix Channel names in Search Results.
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 for(DataSnapshot channels : dataSnapshot.getChildren()) {
                     for (DataSnapshot message : channels.getChildren()) {
-                        if (message.child("text").getValue().toString().contains(query)) {
-                            ChatMessage currMessage = new ChatMessage(
-                                    message.child("text").getValue().toString(),    // text
-                                    message.child("name").getValue().toString(),    // username
-                                    message.child("photoUrl").getValue().toString(),// user photo
-                                    channels.getKey()                               // channel
-                            );
+                        if (channels.getKey().contains("=")) {
+                            if (channels.getKey().contains(UserUtil.parseUsername(sharedPreferences.getString("username", "anonymous"))) &&
+                                    message.child("text").getValue().toString().toLowerCase().contains(query.toLowerCase())) {
+                                ChatMessage currMessage = new ChatMessage(
+                                        message.child("text").getValue().toString(),    // text
+                                        message.child("name").getValue().toString(),    // username
+                                        message.child("photoUrl").getValue().toString(),// user photo
+                                        channels.getKey()                               // channel
+                                );
 
-                            currMessage.setTimestamp((Long)message.child("timestamp").getValue()); //timestamp
-                            foundMessages.add(currMessage);
+                                currMessage.setTimestamp((Long) message.child("timestamp").getValue()); //timestamp
+                                foundMessages.add(currMessage);
+                            }
+                        }else{
+                            if(message.child("text").getValue().toString().toLowerCase().contains(query.toLowerCase())){
+                                ChatMessage currMessage = new ChatMessage(
+                                        message.child("text").getValue().toString(),    // text
+                                        message.child("name").getValue().toString(),    // username
+                                        message.child("photoUrl").getValue().toString(),// user photo
+                                        channels.getKey()                               // channel
+                                );
+
+                                currMessage.setTimestamp((Long) message.child("timestamp").getValue()); //timestamp
+                                foundMessages.add(currMessage);
+                            }
                         }
                     }
                 }
