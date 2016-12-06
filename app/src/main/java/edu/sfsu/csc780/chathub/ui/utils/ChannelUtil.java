@@ -74,10 +74,8 @@ public class ChannelUtil {
         return adapter;
     }
 
-    public static FirebaseRecyclerAdapter<String, ChannelViewHolder> getFirebaseAdapterForUserChannelList(final Activity activity,
-                                                                                                       final View.OnClickListener clickListener) {
-        final SharedPreferences preferences =
-                PreferenceManager.getDefaultSharedPreferences(activity);
+    public static FirebaseRecyclerAdapter<String, ChannelViewHolder> getFirebaseAdapterForUserChannelList(final View.OnClickListener clickListener,
+                                                                                                          final String username) {
         ChannelViewHolder.sChannelViewListener = clickListener;
 
         final FirebaseRecyclerAdapter adapter = new FirebaseRecyclerAdapter<String,
@@ -86,9 +84,9 @@ public class ChannelUtil {
                 R.layout.item_channel,
                 ChannelViewHolder.class,
                 sFirebaseDatabaseReference.child(USER_CHILD)
-                        .child(UserUtil.parseUsername(preferences.getString("username", "")))
+                        .child(UserUtil.parseUsername(username))
                         .child("username")
-                        .child(UserUtil.parseUsername(preferences.getString("username", "")))) {
+                        .child(UserUtil.parseUsername(username))) {
             @Override
             protected void populateViewHolder(final ChannelViewHolder viewHolder,
                                               String channel, int position) {
