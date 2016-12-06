@@ -8,7 +8,24 @@
     android:background="@drawable/message_background"
     android:padding="4dp"
     android:gravity="center_vertical"
-    android:orientation="horizontal">
+    android:orientation="vertical">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:text="@string/pound"
+            android:layout_marginRight="16dp"
+            android:layout_marginLeft="@dimen/activity_horizontal_margin"/>
+        <TextView
+            android:id="@+id/foundChannel"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:text="Test"/>
+    </LinearLayout>
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -28,12 +45,6 @@
             android:layout_marginLeft="10dp"
             android:gravity="center_vertical"
             android:orientation="vertical">
-
-            <TextView
-                android:id="@+id/foundChannel"
-                android:layout_width="wrap_content"
-                android:layout_height="match_parent"
-                android:text="#Test"/>
 
             <TextView
                 android:id="@+id/messageTextView"

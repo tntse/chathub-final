@@ -1,5 +1,8 @@
 package edu.sfsu.csc780.chathub.ui.activities;
 
+import android.app.Fragment;
+import android.app.FragmentManager;
+import android.app.FragmentTransaction;
 import android.app.SearchManager;
 import android.graphics.Color;
 import android.net.Uri;
@@ -21,25 +24,25 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 
 import edu.sfsu.csc780.chathub.R;
+import edu.sfsu.csc780.chathub.model.ChatMessage;
 import edu.sfsu.csc780.chathub.ui.fragments.FilesFragment;
-import edu.sfsu.csc780.chathub.ui.fragments.MessagesFragment;
+import edu.sfsu.csc780.chathub.ui.fragments.MessagesListFragment;
 import edu.sfsu.csc780.chathub.ui.utils.FragmentTabHost;
 import edu.sfsu.csc780.chathub.ui.utils.MessageUtil;
 
 public class MessageSearchActivity extends AppCompatActivity
         implements FilesFragment.OnFragmentInteractionListener,
-            MessagesFragment.OnFragmentInteractionListener {
+            MessagesListFragment.OnListFragmentInteractionListener {
 
     private static DatabaseReference sFirebaseDatabaseReference =
             FirebaseDatabase.getInstance().getReference();
+    private FragmentManager fragmentManager;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -49,9 +52,11 @@ public class MessageSearchActivity extends AppCompatActivity
         Toolbar toolbar = (Toolbar) findViewById(R.id.searchBar);
         setSupportActionBar(toolbar);
 
+        fragmentManager = getFragmentManager();
+
         final FragmentTabHost fragmentTabHost = (FragmentTabHost) findViewById(android.R.id.tabcontent);
-        fragmentTabHost.setup(this, getFragmentManager(), R.id.realtabcontent);
-        fragmentTabHost.addTab(fragmentTabHost.newTabSpec("messages").setIndicator("Messages"), MessagesFragment.class, null);
+        fragmentTabHost.setup(this, fragmentManager, R.id.realtabcontent);
+        fragmentTabHost.addTab(fragmentTabHost.newTabSpec("messages").setIndicator("Messages"), MessagesListFragment.class, null);
         fragmentTabHost.addTab(fragmentTabHost.newTabSpec("files").setIndicator("Files"), FilesFragment.class, null);
         setTabColor(fragmentTabHost);
         fragmentTabHost.setOnTabChangedListener(new TabHost.OnTabChangeListener() {
@@ -126,27 +131,34 @@ public class MessageSearchActivity extends AppCompatActivity
     }
 
     private void searchForMessages(final String query) {
-        final List<DataSnapshot> foundMessages = new ArrayList<>();
-        final HashMap<Integer, String> messagesChannelList = new HashMap<>();
+        Log.e("Test", "I'm in searchMessage");
+        final List<ChatMessage> foundMessages = new ArrayList<>();
 
         sFirebaseDatabaseReference.child(MessageUtil.MESSAGES_CHILD).addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 for(DataSnapshot channels : dataSnapshot.getChildren()) {
-                    for(DataSnapshot message : channels.getChildren()) {
-                        if(message.child("text").getValue().toString().contains(query)) {
-                            foundMessages.add(message);
-                            int index = foundMessages.size()-1;
-                            messagesChannelList.put(index, channels.getKey());
+                    for (DataSnapshot message : channels.getChildren()) {
+                        if (message.child("text").getValue().toString().contains(query)) {
+                            ChatMessage currMessage = new ChatMessage(
+                                    message.child("text").getValue().toString(),    // text
+                                    message.child("name").getValue().toString(),    // username
+                                    message.child("photoUrl").getValue().toString(),// user photo
+                                    channels.getKey()                               // channel
+                            );
+
+                            currMessage.setTimestamp((Long)message.child("timestamp").getValue()); //timestamp
+                            foundMessages.add(currMessage);
                         }
                     }
                 }
-                
+                ((MessagesListFragment)fragmentManager.findFragmentByTag("messages")).setChatMessages(foundMessages);
             }
 
             @Override
             public void onCancelled(DatabaseError databaseError) {}
         });
+
     }
 
     private void setTabColor(TabHost tabhost) {

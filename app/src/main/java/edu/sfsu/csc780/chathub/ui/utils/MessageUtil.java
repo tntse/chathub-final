@@ -1,4 +1,5 @@
 package edu.sfsu.csc780.chathub.ui.utils;
+
 import android.app.Activity;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
@@ -23,7 +24,6 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.Query;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 
@@ -31,8 +31,8 @@ import java.util.Calendar;
 import java.util.Date;
 
 import de.hdodenhof.circleimageview.CircleImageView;
-import edu.sfsu.csc780.chathub.model.ChatMessage;
 import edu.sfsu.csc780.chathub.R;
+import edu.sfsu.csc780.chathub.model.ChatMessage;
 
 public class MessageUtil {
     private static final String LOG_TAG = MessageUtil.class.getSimpleName();
@@ -58,6 +58,7 @@ public class MessageUtil {
         public CircleImageView messengerImageView;
         public TextView timestampTextView;
         public View messageLayout;
+
         public MessageViewHolder(View v) {
             super(v);
             messageTextView = (TextView) itemView.findViewById(R.id.messageTextView);
@@ -125,9 +126,9 @@ public class MessageUtil {
     }
 
     private static void setPhotoAndMessage(final MessageViewHolder viewHolder,
-                                    ChatMessage chatMessage,
-                                    final Activity activity,
-                                    final SharedPreferences preferences) {
+                                           ChatMessage chatMessage,
+                                           final Activity activity,
+                                           final SharedPreferences preferences) {
         viewHolder.messageTextView.setText(chatMessage.getText());
         viewHolder.messengerTextView.setText(chatMessage.getName());
         if (chatMessage.getPhotoUrl() == null) {

@@ -78,7 +78,7 @@ public class ChannelSearchActivity extends AppCompatActivity {
                 public void onCancelled(DatabaseError databaseError) {}
             });
 
-            //Change view to channel message view
+            // TODO: Change view to channel message view
         }
     };
 
