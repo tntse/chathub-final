@@ -122,4 +122,14 @@ public class ChannelUtil {
             }
         }
     }
+
+    public static String getChannelDisplayName(String unEditedChannelName, Activity currActivity){
+        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(currActivity);
+        if(unEditedChannelName.contains("=")){
+            int start = UserUtil.parseUsername(sharedPreferences.getString("username", "anonymous")).length() + 1;
+            unEditedChannelName = "Private Conversation with " + unEditedChannelName.substring(start);
+        }
+
+        return unEditedChannelName;
+    }
 }

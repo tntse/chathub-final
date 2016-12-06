@@ -36,6 +36,7 @@ import edu.sfsu.csc780.chathub.R;
 import edu.sfsu.csc780.chathub.model.ChatMessage;
 import edu.sfsu.csc780.chathub.ui.fragments.FilesFragment;
 import edu.sfsu.csc780.chathub.ui.fragments.MessagesListFragment;
+import edu.sfsu.csc780.chathub.ui.utils.ChannelUtil;
 import edu.sfsu.csc780.chathub.ui.utils.FragmentTabHost;
 import edu.sfsu.csc780.chathub.ui.utils.MessageUtil;
 import edu.sfsu.csc780.chathub.ui.utils.UserUtil;
@@ -150,16 +151,11 @@ public class MessageSearchActivity extends AppCompatActivity
                                     channels.getKey().indexOf(UserUtil.parseUsername(sharedPreferences.getString("username", "anonymous"))) == 0) ||
                                     !channels.getKey().contains("=")){
 
-                                String messageChannel = channels.getKey();
-                                if(messageChannel.contains("=")){
-                                    int start = UserUtil.parseUsername(sharedPreferences.getString("username", "anonymous")).length() + 1;
-                                    messageChannel = "Private Conversation with " + messageChannel.substring(start);
-                                }
                                 ChatMessage currMessage = new ChatMessage(
                                         message.child("text").getValue().toString(),    // text
                                         message.child("name").getValue().toString(),    // username
                                         message.child("photoUrl").getValue().toString(),// user photo
-                                        messageChannel                             // channel
+                                        ChannelUtil.getChannelDisplayName(channels.getValue().toString(), MessageSearchActivity.this)                            // channel
                                 );
 
                                 currMessage.setTimestamp((Long) message.child("timestamp").getValue()); //timestamp

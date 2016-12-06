@@ -166,7 +166,7 @@ public class MainActivity extends AppCompatActivity
             String channelName = "";
             if(channel == null) {
                 channel = (TextView) view.findViewById(R.id.username);
-                channelName = channel.getText().toString()+"="+UserUtil.parseUsername(mSharedPreferences.getString("username", "anonymous"));
+                channelName = UserUtil.parseUsername(mSharedPreferences.getString("username", "anonymous")) + "=" + channel.getText().toString();
             } else {
                 channelName = channel.getText().toString();
             }
@@ -211,6 +211,8 @@ public class MainActivity extends AppCompatActivity
         mSinchClient.setSupportCalling(true);
 
         mCurrentChannel = mSharedPreferences.getString("currentChannel", "general");
+        mCurrChanTextView = (TextView) findViewById(R.id.currentChannelName);
+        mCurrChanTextView.setText(ChannelUtil.getChannelDisplayName(mCurrentChannel, this));
 
         mGoogleApiClient = new GoogleApiClient.Builder(this)
                 .enableAutoManage(this /* FragmentActivity */, this /* OnConnectionFailedListener */)
@@ -237,9 +239,6 @@ public class MainActivity extends AppCompatActivity
                 mMessageRecyclerView,
                 mImageClickListener);
         mMessageRecyclerView.setAdapter(mFirebaseAdapter);
-
-        mCurrChanTextView = (TextView) findViewById(R.id.currentChannelName);
-        mCurrChanTextView.setText(mCurrentChannel);
 
         mProgressBar.setVisibility(ProgressBar.INVISIBLE);
 
@@ -391,13 +390,14 @@ public class MainActivity extends AppCompatActivity
 
     private void setChannelPage() {
         mCurrentChannel = UserUtil.parseUsername(mSharedPreferences.getString("currentChannel", "general"));
+
         mFirebaseAdapter = MessageUtil.getFirebaseAdapter(MainActivity.this,
                 MainActivity.this,  /* MessageLoadListener */
                 mLinearLayoutManager,
                 mMessageRecyclerView,
                 mImageClickListener);
         mMessageRecyclerView.swapAdapter(mFirebaseAdapter, false);
-        mCurrChanTextView.setText(mCurrentChannel);
+        mCurrChanTextView.setText(ChannelUtil.getChannelDisplayName(mCurrentChannel, this));
         mNavRecyclerView.swapAdapter(ChannelUtil.getFirebaseAdapterForUserChannelList(this, mChannelClickListener), false);
     }
 
