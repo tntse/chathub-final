@@ -12,6 +12,7 @@
         android:layout_height="wrap_content"
         android:layout_width="match_parent"
         android:minHeight="?attr/actionBarSize"
+        android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
         android:background="?attr/colorPrimary"
         android:paddingTop="@dimen/activity_vertical_margin"
         />
@@ -67,6 +68,7 @@
             android:id="@+id/channelEditText"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:theme="@style/EditTextTheme"
             android:hint="Channel name"
             android:inputType="textShortMessage" />
 
@@ -107,6 +109,7 @@
             android:id="@+id/purposeEditText"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:theme="@style/EditTextTheme"
             android:hint="Purpose"
             android:inputType="textShortMessage"
             android:ems="10" />
