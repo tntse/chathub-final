@@ -144,34 +144,16 @@
             android:layout_height="match_parent">
 
             <include layout="@layout/channel_header"
-                android:id="@+id/channelHeader"/>
-
-            <android.support.v7.widget.RecyclerView
-                android:layout_width="match_parent"
-                android:layout_height="370dp"
-                android:id="@+id/navRecyclerView"
-                android:layout_below="@+id/channelHeader"/>
-
-
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:id="@+id/callinprogress"
-                android:layout_below="@id/navRecyclerView"
-                android:text="@string/callinprogress"
-                android:visibility="invisible"
-                android:textAlignment="center"
-                android:textAppearance="@android:style/TextAppearance.Medium"
-                android:textColor="#FFFFFF"
-                android:layout_marginBottom="@dimen/activity_vertical_margin"/>
-
+                android:id="@+id/channelHeader" />
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="50dp"
                 android:orientation="horizontal"
-                android:layout_below="@+id/callinprogress"
                 android:gravity="center"
+                android:layout_alignParentBottom="true"
+                android:layout_marginBottom="@dimen/activity_vertical_margin"
+                android:id="@+id/callbuttons"
                 >
 
 
@@ -181,16 +163,37 @@
                     android:id="@+id/voiceCall"
                     android:background="@color/green"
                     android:text="Start Call"
-                    android:layout_marginRight="@dimen/activity_horizontal_margin"/>
+                    android:layout_marginRight="@dimen/activity_horizontal_margin"
+                    android:padding="4dp"/>
 
                 <Button
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:id="@+id/endCall"
                     android:background="@color/red"
-                    android:text="End Call"/>
+                    android:text="End Call"
+                    android:padding="4dp"/>
 
             </LinearLayout>
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/callinprogress"
+                android:layout_above="@id/callbuttons"
+                android:text="@string/callinprogress"
+                android:visibility="invisible"
+                android:textAlignment="center"
+                android:textAppearance="@android:style/TextAppearance.Medium"
+                android:textColor="#FFFFFF"
+                android:layout_marginBottom="@dimen/activity_vertical_margin"/>
+
+            <android.support.v7.widget.RecyclerView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/navRecyclerView"
+                android:layout_below="@+id/channelHeader"
+                android:layout_above="@id/callinprogress"/>
 
         </RelativeLayout>
 
